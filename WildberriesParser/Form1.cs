@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -1029,290 +1030,285 @@ namespace WildberriesParser
         {
             return new Thread(() =>
             {
-                if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON")))
-                    Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON"));
+                string ozonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON");
+                if (!Directory.Exists(ozonPath))
+                    Directory.CreateDirectory(ozonPath);
                 ChromeDriver driver = CreateDriver();
                 driver.Manage().Window.Minimize();
-                try
+                using (var file = File.CreateText(Path.Combine(ozonPath, "log.txt")))
                 {
-                    string text = "";
-                    WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-                    string request = "";
-                    while (true)
+                    try
                     {
-                        try
-                        {
-                            driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={query}");
-                            break;
-                        }
-                        catch
+                        string text = "";
+                        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                        string request = "";
+                        while (true)
                         {
                             try
                             {
-                                driver?.Close();
-                                driver?.Quit();
+                                driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={query}");
+                                break;
                             }
-                            catch { }
-                            driver = CreateDriver();
-                            driver.Manage().Window.Minimize();
-                        }
-                    }
-                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                    Thread.Sleep(1000);
-                    while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
-                    {
-                        driver.Manage().Window.Position = new Point(0, 0);
-                        driver.Manage().Window.Maximize();
-                        MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    driver.Manage().Window.Position = new Point(-20000, -20000);
-                    driver.Manage().Window.Minimize();
-                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-
-                    request = driver.Url + $"&sorting={sort}";
-                    while (true)
-                    {
-                        try
-                        {
-                            driver.Navigate().GoToUrl(request);
-                            break;
-                        }
-                        catch
-                        {
-                            try
+                            catch(Exception ex)
                             {
-                                driver?.Close();
-                                driver?.Quit();
-                            }
-                            catch { }
-                            driver = CreateDriver();
-                            driver.Manage().Window.Minimize();
-                        }
-                    }
-                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-
-                    Thread.Sleep(1000);
-                    while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
-                    {
-                        driver.Manage().Window.Position = new Point(0, 0);
-                        driver.Manage().Window.Maximize();
-                        MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    driver.Manage().Window.Position = new Point(-20000, -20000);
-                    driver.Manage().Window.Minimize();
-                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                    string html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
-                    int n = html.IndexOf("data-widget=\"fulltextResultsHeader\"");
-
-                    if (n >= 0)
-                    {
-                        string c = html.Substring(n + "data-widget=\"fulltextResultsHeader\"".Length);
-                        c = new string(c.Substring(0, c.IndexOf("</div>")).Reverse().ToArray());
-                        string c2 = "";
-                        for (int i = 0; i < c.Length; i++)
-                        {
-                            if (char.IsDigit(c[i]))
-                            {
-                                c2 = c[i] + c2;
-                            }
-                            else
-                            {
-                                if (c2 != "")
-                                    break;
-                            }
-                        }
-                        n = int.Parse(c2);
-                        if (maxCount < 0 || n < maxCount)
-                        {
-                            maxCount = n;
-                        }
-                        lock (lockObj)
-                        {
-                            this.maxCount += maxCount;
-                        }
-                        int count = 0;
-                        this.Invoke(new Action(() =>
-                        {
-                            if (maxCount == 0)
-                            {
-                                ozonProgressBar.Value = 100;
-                                label8.Text = "100%";
-                            }
-                            else
-                            {
-                                ozonProgressBar.Value = 0;
-                                label8.Text = "0%";
-                            }
-                        }));
-
-                        ReadOnlyCollection<IWebElement> items;
-                        List<string> urls = new List<string>();
-                        string nextUrl;
-                        int page = 1;
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Озон");
-                        foreach (var item in ozonFields.Values)
-                        {
-                            worksheet.SetValue(1, item.Column, item.Name);
-                        }
-                        string data;
-                        ExcelRange cell;
-                        IWebElement brandElement;
-                        int price;
-                        HashSet<string> pages = new HashSet<string>();
-                        try
-                        {
-                            string data2;
-                            while (true)
-                            {
-                                if (stop)
-                                    break;
                                 try
                                 {
-                                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                    file.WriteLine(CreateExceptionString(ex) + "-1");
+                                }
+                                catch { }
+                                try
+                                {
+                                    driver?.Close();
+                                    driver?.Quit();
+                                }
+                                catch { }
+                                driver = CreateDriver();
+                                driver.Manage().Window.Minimize();
+                            }
+                        }
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                        Thread.Sleep(1000);
+                        while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
+                        {
+                            driver.Manage().Window.Position = new Point(0, 0);
+                            driver.Manage().Window.Maximize();
+                            MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        driver.Manage().Window.Position = new Point(-20000, -20000);
+                        driver.Manage().Window.Minimize();
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
 
-                                    while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
-                                    {
-                                        driver.Manage().Window.Position = new Point(0, 0);
-                                        driver.Manage().Window.Maximize();
-                                        MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    }
-                                    driver.Manage().Window.Position = new Point(-20000, -20000);
-                                    driver.Manage().Window.Minimize();
-                                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                    html = driver.PageSource.Replace("'", "\"");
-                                    n = html.IndexOf("data-widget=\"searchResultsV2\"");
-                                    data = "f";
-                                    if (!pages.Add(driver.Url))
-                                    {
+                        request = driver.Url + $"&sorting={sort}";
+                        while (true)
+                        {
+                            try
+                            {
+                                driver.Navigate().GoToUrl(request);
+                                break;
+                            }
+                            catch(Exception ex)
+                            {
+                                try
+                                {
+                                    file.WriteLine(CreateExceptionString(ex) + "-2");
+                                }
+                                catch { }
+                                try
+                                {
+                                    driver?.Close();
+                                    driver?.Quit();
+                                }
+                                catch { }
+                                driver = CreateDriver();
+                                driver.Manage().Window.Minimize();
+                            }
+                        }
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+
+                        Thread.Sleep(1000);
+                        while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
+                        {
+                            driver.Manage().Window.Position = new Point(0, 0);
+                            driver.Manage().Window.Maximize();
+                            MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        driver.Manage().Window.Position = new Point(-20000, -20000);
+                        driver.Manage().Window.Minimize();
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                        string html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
+                        int n = html.IndexOf("data-widget=\"fulltextResultsHeader\"");
+
+                        if (n >= 0)
+                        {
+                            string c = html.Substring(n + "data-widget=\"fulltextResultsHeader\"".Length);
+                            c = new string(c.Substring(0, c.IndexOf("</div>")).Reverse().ToArray());
+                            string c2 = "";
+                            for (int i = 0; i < c.Length; i++)
+                            {
+                                if (char.IsDigit(c[i]))
+                                {
+                                    c2 = c[i] + c2;
+                                }
+                                else
+                                {
+                                    if (c2 != "")
                                         break;
-                                    }
-                                    if (n >= 0)
+                                }
+                            }
+                            n = int.Parse(c2);
+                            if (maxCount < 0 || n < maxCount)
+                            {
+                                maxCount = n;
+                            }
+                            lock (lockObj)
+                            {
+                                this.maxCount += maxCount;
+                            }
+                            int count = 0;
+                            this.Invoke(new Action(() =>
+                            {
+                                if (maxCount == 0)
+                                {
+                                    ozonProgressBar.Value = 100;
+                                    label8.Text = "100%";
+                                }
+                                else
+                                {
+                                    ozonProgressBar.Value = 0;
+                                    label8.Text = "0%";
+                                }
+                            }));
+
+                            ReadOnlyCollection<IWebElement> items;
+                            List<string> urls = new List<string>();
+                            string nextUrl;
+                            int page = 1;
+                            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Озон");
+                            foreach (var item in ozonFields.Values)
+                            {
+                                worksheet.SetValue(1, item.Column, item.Name);
+                            }
+                            string data;
+                            ExcelRange cell;
+                            IWebElement brandElement;
+                            int price;
+                            HashSet<string> pages = new HashSet<string>();
+                            try
+                            {
+                                string data2;
+                                while (true)
+                                {
+                                    if (stop)
+                                        break;
+                                    try
                                     {
-                                        data = html.Substring(n + "data-widget=\"searchResultsV2\"".Length);
-                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
-                                        data = data.Substring(data.IndexOf("<div"));
-                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
-                                        data = data.Substring(data.IndexOf("<a") + 2);
-                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
-                                        data = data.Substring(0, data.IndexOf("\""));
-                                    }
-                                    items = driver.FindElementsByCssSelector($"a[class='{data}']");
-                                    urls.Clear();
-                                    foreach (var item in items)
-                                    {
-                                        urls.Add(item.GetAttribute("href"));
-                                    }
-                                    nextUrl = null;
-                                    page++;
-                                    nextUrl = request + $"&page={page}";
-                                    foreach (var url in urls)
-                                    {
-                                        if (stop)
-                                            break;
-                                        try
+                                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+
+                                        while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
                                         {
-                                            price = -1;
-                                            while (true)
-                                            {
-                                                try
-                                                {
-                                                    driver.Navigate().GoToUrl(url);
-                                                    break;
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        driver?.Close();
-                                                        driver?.Quit();
-                                                    }
-                                                    catch { }
-                                                    try
-                                                    {
-                                                        driver = CreateDriver();
-                                                        driver.Manage().Window.Minimize();
-                                                    }
-                                                    catch { }
-                                                }
-                                            }
-                                            wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                            while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
-                                            {
-                                                driver.Manage().Window.Position = new Point(0, 0);
-                                                driver.Manage().Window.Maximize();
-                                                MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                            }
+                                            driver.Manage().Window.Position = new Point(0, 0);
+                                            driver.Manage().Window.Maximize();
+                                            MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        }
+                                        driver.Manage().Window.Position = new Point(-20000, -20000);
+                                        driver.Manage().Window.Minimize();
+                                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                        html = driver.PageSource.Replace("'", "\"");
+                                        n = html.IndexOf("data-widget=\"searchResultsV2\"");
+                                        data = "f";
+                                        if (!pages.Add(driver.Url))
+                                        {
+                                            break;
+                                        }
+                                        if (n >= 0)
+                                        {
+                                            data = html.Substring(n + "data-widget=\"searchResultsV2\"".Length);
+                                            data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                            data = data.Substring(data.IndexOf("<div"));
+                                            data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                            data = data.Substring(data.IndexOf("<a") + 2);
+                                            data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                            data = data.Substring(0, data.IndexOf("\""));
+                                        }
+                                        items = driver.FindElementsByCssSelector($"a[class='{data}']");
+                                        urls.Clear();
+                                        foreach (var item in items)
+                                        {
+                                            urls.Add(item.GetAttribute("href"));
+                                        }
+                                        nextUrl = null;
+                                        page++;
+                                        nextUrl = request + $"&page={page}";
+                                        foreach (var url in urls)
+                                        {
+                                            if (stop)
+                                                break;
                                             try
                                             {
-                                                driver.Manage().Window.Position = new Point(-20000, -20000);
-                                                driver.Manage().Window.Minimize();
-                                            }
-                                            catch { }
-                                            wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                            html = "";
-
-                                            while (!html.Contains("</div>"))
-                                            {
-                                                html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ");
-                                            }
-                                            Thread.Sleep(100);
-                                            worksheet.SetValue(count + 2, ozonFields["query"].Column, query);
-                                            n = html.IndexOf("data-widget=\"webBrand\"");
-                                            text = driver.FindElementByTagName("html").Text;
-                                            if (n >= 0)
-                                            {
-                                                try
+                                                price = -1;
+                                                while (true)
                                                 {
-                                                    data = html.Substring(n + "data-widget=\"webBrand\"".Length);
-                                                    data = data.Substring(data.IndexOf("<a"));
-                                                    data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
-                                                    data = data.Substring(0, data.IndexOf("\""));
-                                                    brandElement = driver.FindElementByClassName(data);
                                                     try
                                                     {
-                                                        data = brandElement.GetAttribute("href");
-                                                        data2 = text;
+                                                        driver.Navigate().GoToUrl(url);
+                                                        break;
+                                                    }
+                                                    catch(Exception ex)
+                                                    {
                                                         try
                                                         {
-                                                            n = data2.IndexOf("Все товары ");
-                                                            if (n >= 0)
+                                                            file.WriteLine(CreateExceptionString(ex) + count);
+                                                        }
+                                                        catch { }
+                                                        try
+                                                        {
+                                                            driver?.Close();
+                                                            driver?.Quit();
+                                                        }
+                                                        catch { }
+                                                        try
+                                                        {
+                                                            driver = CreateDriver();
+                                                            driver.Manage().Window.Minimize();
+                                                        }
+                                                        catch { }
+                                                    }
+                                                }
+                                                wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                                while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
+                                                {
+                                                    driver.Manage().Window.Position = new Point(0, 0);
+                                                    driver.Manage().Window.Maximize();
+                                                    MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                                }
+                                                try
+                                                {
+                                                    driver.Manage().Window.Position = new Point(-20000, -20000);
+                                                    driver.Manage().Window.Minimize();
+                                                }
+                                                catch { }
+                                                wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                                html = "";
+
+                                                while (!html.Contains("</div>"))
+                                                {
+                                                    html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ");
+                                                }
+                                                Thread.Sleep(100);
+                                                worksheet.SetValue(count + 2, ozonFields["query"].Column, query);
+                                                n = html.IndexOf("data-widget=\"webBrand\"");
+                                                text = driver.FindElementByTagName("html").Text;
+                                                if (n >= 0)
+                                                {
+                                                    try
+                                                    {
+                                                        data = html.Substring(n + "data-widget=\"webBrand\"".Length);
+                                                        data = data.Substring(data.IndexOf("<a"));
+                                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                                        data = data.Substring(0, data.IndexOf("\""));
+                                                        brandElement = driver.FindElementByClassName(data);
+                                                        try
+                                                        {
+                                                            data = brandElement.GetAttribute("href");
+                                                            data2 = text;
+                                                            try
                                                             {
-                                                                data2 = data2.Substring(n + "Все товары ".Length);
-                                                                try
-                                                                {
-                                                                    data2 = data2.Substring(0, data2.IndexOf("\r\n"));
-                                                                }
-                                                                catch { }
-                                                            }
-                                                            else
-                                                            {
-                                                                n = data2.LastIndexOf("Бренд\r\n");
+                                                                n = data2.IndexOf("Все товары ");
                                                                 if (n >= 0)
                                                                 {
-                                                                    data2 = data2.Substring(n + "Бренд\r\n".Length);
-                                                                    for (int i = 0; i < data2.Length; i++)
+                                                                    data2 = data2.Substring(n + "Все товары ".Length);
+                                                                    try
                                                                     {
-                                                                        if ((data2[i] == '\r' || data2[i] == '\n') && i != 0)
-                                                                        {
-                                                                            if (i != 0)
-                                                                            {
-                                                                                data2 = data2.Substring(0, i);
-                                                                                break;
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                data2 = data2.Remove(i, 1);
-                                                                                i--;
-                                                                            }
-                                                                        }
+                                                                        data2 = data2.Substring(0, data2.IndexOf("\r\n"));
                                                                     }
+                                                                    catch { }
                                                                 }
                                                                 else
                                                                 {
-                                                                    n = data2.LastIndexOf("Бренд:\r\n");
+                                                                    n = data2.LastIndexOf("Бренд\r\n");
                                                                     if (n >= 0)
                                                                     {
-                                                                        data2 = data2.Substring(n + "Бренд:\r\n".Length);
+                                                                        data2 = data2.Substring(n + "Бренд\r\n".Length);
                                                                         for (int i = 0; i < data2.Length; i++)
                                                                         {
                                                                             if ((data2[i] == '\r' || data2[i] == '\n') && i != 0)
@@ -1332,267 +1328,312 @@ namespace WildberriesParser
                                                                     }
                                                                     else
                                                                     {
-                                                                        data2 = "";
+                                                                        n = data2.LastIndexOf("Бренд:\r\n");
+                                                                        if (n >= 0)
+                                                                        {
+                                                                            data2 = data2.Substring(n + "Бренд:\r\n".Length);
+                                                                            for (int i = 0; i < data2.Length; i++)
+                                                                            {
+                                                                                if ((data2[i] == '\r' || data2[i] == '\n') && i != 0)
+                                                                                {
+                                                                                    if (i != 0)
+                                                                                    {
+                                                                                        data2 = data2.Substring(0, i);
+                                                                                        break;
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        data2 = data2.Remove(i, 1);
+                                                                                        i--;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            data2 = "";
+                                                                        }
                                                                     }
                                                                 }
                                                             }
-                                                        }
-                                                        catch { }
-                                                        cell = worksheet.Cells[count + 2, ozonFields["brand"].Column];
-                                                        if (data2 != "")
-                                                        {
-                                                            cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute) { Display = data2 };
-                                                        }
-                                                        else
-                                                        {
-                                                            cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute);
-                                                        }
+                                                            catch { }
+                                                            cell = worksheet.Cells[count + 2, ozonFields["brand"].Column];
+                                                            if (data2 != "")
+                                                            {
+                                                                cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute) { Display = data2 };
+                                                            }
+                                                            else
+                                                            {
+                                                                cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute);
+                                                            }
 
-                                                    }
-                                                    catch
-                                                    { }
-                                                }
-                                                catch { }
-                                            }
-                                            data = driver.Title ?? "";
-                                            n = data.IndexOf(" — купить");
-                                            if (n >= 0)
-                                            {
-                                                try
-                                                {
-                                                    data = data.Substring(0, n);
-                                                    cell = worksheet.Cells[count + 2, ozonFields["name"].Column];
-                                                    cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute) { Display = data };
-                                                }
-                                                catch { }
-                                            }
-                                            else
-                                            {
-                                                Clipboard.SetText(Clipboard.GetText() + driver.Title ?? "bad");
-                                            }
-                                            data = text;
-                                            n = data.IndexOf("Код товара:");
-                                            if (n < 0)
-                                            {
-                                                n = data.IndexOf("Код:");
-                                            }
-                                            if (n >= 0)
-                                            {
-                                                try
-                                                {
-                                                    data = data.Substring(n);
-                                                    data = data.Substring(0, data.IndexOf("\r\n"));
-                                                    for (int i = 0; i < data.Length; i++)
-                                                    {
-                                                        if (!char.IsDigit(data[i]))
-                                                        {
-                                                            data = data.Remove(i, 1);
-                                                            i--;
                                                         }
+                                                        catch
+                                                        { }
                                                     }
+                                                    catch { }
+                                                }
+                                                data = driver.Title ?? "";
+                                                n = data.IndexOf(" — купить");
+                                                if (n >= 0)
+                                                {
                                                     try
                                                     {
-                                                        worksheet.SetValue(count + 2, ozonFields["article"].Column, int.Parse(data));
+                                                        data = data.Substring(0, n);
+                                                        cell = worksheet.Cells[count + 2, ozonFields["name"].Column];
+                                                        cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute) { Display = data };
                                                     }
-                                                    catch
-                                                    {
-                                                        worksheet.SetValue(count + 2, ozonFields["article"].Column, data);
-                                                    }
+                                                    catch { }
                                                 }
-                                                catch { }
-                                            }
-                                            data = html;
-                                            n = data.IndexOf("data-widget=\"webSale\"");
-                                            if (n >= 0)
-                                            {
-                                                try
+                                                else
                                                 {
-                                                    data = data.Substring(n + "data-widget=\"webSale\"".Length);
-                                                    data = data.Substring(data.IndexOf("<div") + 4);
-                                                    data = data.Substring(data.IndexOf("<div") + 4);
-                                                    data = data.Substring(data.IndexOf("<div") + 4);
-                                                    data = data.Substring(data.IndexOf("<div") + 4);
-                                                    data = data.Substring(0, data.IndexOf("</div></div>"));
-                                                    n = data.IndexOf("<span");
-                                                    if (n >= 0)
+                                                    Clipboard.SetText(Clipboard.GetText() + driver.Title ?? "bad");
+                                                }
+                                                data = text;
+                                                n = data.IndexOf("Код товара:");
+                                                if (n < 0)
+                                                {
+                                                    n = data.IndexOf("Код:");
+                                                }
+                                                if (n >= 0)
+                                                {
+                                                    try
                                                     {
-                                                        data = data.Substring(n + "<span".Length);
-                                                        data = data.Substring(data.IndexOf(">") + 1);
-                                                        data2 = data.Substring(0, data.IndexOf("</span>"));
-                                                        for (int i = 0; i < data2.Length; i++)
+                                                        data = data.Substring(n);
+                                                        data = data.Substring(0, data.IndexOf("\r\n"));
+                                                        for (int i = 0; i < data.Length; i++)
                                                         {
-                                                            if (!char.IsDigit(data2[i]))
+                                                            if (!char.IsDigit(data[i]))
                                                             {
-                                                                data2 = data2.Remove(i, 1);
+                                                                data = data.Remove(i, 1);
                                                                 i--;
                                                             }
                                                         }
                                                         try
                                                         {
-                                                            price = int.Parse(data2);
-                                                            worksheet.SetValue(count + 2, ozonFields["priceafter"].Column, price);
+                                                            worksheet.SetValue(count + 2, ozonFields["article"].Column, int.Parse(data));
                                                         }
-                                                        catch { }
+                                                        catch
+                                                        {
+                                                            worksheet.SetValue(count + 2, ozonFields["article"].Column, data);
+                                                        }
+                                                    }
+                                                    catch { }
+                                                }
+                                                data = html;
+                                                n = data.IndexOf("data-widget=\"webSale\"");
+                                                if (n >= 0)
+                                                {
+                                                    try
+                                                    {
+                                                        data = data.Substring(n + "data-widget=\"webSale\"".Length);
+                                                        data = data.Substring(data.IndexOf("<div") + 4);
+                                                        data = data.Substring(data.IndexOf("<div") + 4);
+                                                        data = data.Substring(data.IndexOf("<div") + 4);
+                                                        data = data.Substring(data.IndexOf("<div") + 4);
+                                                        data = data.Substring(0, data.IndexOf("</div></div>"));
                                                         n = data.IndexOf("<span");
                                                         if (n >= 0)
                                                         {
                                                             data = data.Substring(n + "<span".Length);
                                                             data = data.Substring(data.IndexOf(">") + 1);
                                                             data2 = data.Substring(0, data.IndexOf("</span>"));
+                                                            for (int i = 0; i < data2.Length; i++)
+                                                            {
+                                                                if (!char.IsDigit(data2[i]))
+                                                                {
+                                                                    data2 = data2.Remove(i, 1);
+                                                                    i--;
+                                                                }
+                                                            }
                                                             try
                                                             {
-                                                                for (int i = 0; i < data2.Length; i++)
+                                                                price = int.Parse(data2);
+                                                                worksheet.SetValue(count + 2, ozonFields["priceafter"].Column, price);
+                                                            }
+                                                            catch { }
+                                                            n = data.IndexOf("<span");
+                                                            if (n >= 0)
+                                                            {
+                                                                data = data.Substring(n + "<span".Length);
+                                                                data = data.Substring(data.IndexOf(">") + 1);
+                                                                data2 = data.Substring(0, data.IndexOf("</span>"));
+                                                                try
                                                                 {
-                                                                    if (!char.IsDigit(data2[i]))
+                                                                    for (int i = 0; i < data2.Length; i++)
                                                                     {
-                                                                        data2 = data2.Remove(i, 1);
-                                                                        i--;
+                                                                        if (!char.IsDigit(data2[i]))
+                                                                        {
+                                                                            data2 = data2.Remove(i, 1);
+                                                                            i--;
+                                                                        }
                                                                     }
+                                                                    worksheet.SetValue(count + 2, ozonFields["pricebefore"].Column, int.Parse(data2));
                                                                 }
-                                                                worksheet.SetValue(count + 2, ozonFields["pricebefore"].Column, int.Parse(data2));
+                                                                catch
+                                                                {
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    catch { }
+                                                }
+                                                data = text;
+                                                n = data.LastIndexOf("Вес товара, г");
+                                                if (n >= 0)
+                                                {
+                                                    try
+                                                    {
+                                                        data = data.Substring(n + "Вес товара, г".Length);
+                                                        for (int i = 0; i < data.Length; i++)
+                                                        {
+                                                            if (!char.IsDigit(data[i]))
+                                                            {
+                                                                if ((data[i] == '\r' || data[i] == '\n') && i != 0)
+                                                                {
+                                                                    data = data.Substring(0, i);
+                                                                    break;
+                                                                }
+                                                                data = data.Remove(i, 1);
+                                                                i--;
+                                                            }
+                                                        }
+                                                        worksheet.SetValue(count + 2, ozonFields["weight"].Column, int.Parse(data));
+                                                        if (price > 0)
+                                                        {
+                                                            try
+                                                            {
+                                                                worksheet.SetValue(count + 2, ozonFields["price"].Column, price * 100 / int.Parse(data));
                                                             }
                                                             catch
+                                                            { }
+                                                        }
+                                                    }
+                                                    catch { }
+                                                }
+                                                data = text;
+                                                n = data.IndexOf("отзыв");
+                                                if (n >= 0)
+                                                {
+                                                    try
+                                                    {
+                                                        data = data.Substring(0, n);
+                                                        data = data.Substring(Math.Max(data.LastIndexOf("\n"), data.LastIndexOf("\r")) + 1);
+                                                        for (int i = 0; i < data.Length; i++)
+                                                        {
+                                                            if (!char.IsDigit(data[i]))
                                                             {
+                                                                data = data.Remove(i, 1);
+                                                                i--;
                                                             }
                                                         }
+                                                        worksheet.SetValue(count + 2, ozonFields["comments"].Column, int.Parse(data));
+                                                    }
+                                                    catch
+                                                    {
+                                                        worksheet.SetValue(count + 2, ozonFields["comments"].Column, 0);
                                                     }
                                                 }
-                                                catch { }
-                                            }
-                                            data = text;
-                                            n = data.LastIndexOf("Вес товара, г");
-                                            if (n >= 0)
-                                            {
-                                                try
-                                                {
-                                                    data = data.Substring(n + "Вес товара, г".Length);
-                                                    for (int i = 0; i < data.Length; i++)
-                                                    {
-                                                        if (!char.IsDigit(data[i]))
-                                                        {
-                                                            if ((data[i] == '\r' || data[i] == '\n') && i != 0)
-                                                            {
-                                                                data = data.Substring(0, i);
-                                                                break;
-                                                            }
-                                                            data = data.Remove(i, 1);
-                                                            i--;
-                                                        }
-                                                    }
-                                                    worksheet.SetValue(count + 2, ozonFields["weight"].Column, int.Parse(data));
-                                                    if (price > 0)
-                                                    {
-                                                        try
-                                                        {
-                                                            worksheet.SetValue(count + 2, ozonFields["price"].Column, price * 100 / int.Parse(data));
-                                                        }
-                                                        catch
-                                                        { }
-                                                    }
-                                                }
-                                                catch { }
-                                            }
-                                            data = text;
-                                            n = data.IndexOf("отзыв");
-                                            if (n >= 0)
-                                            {
-                                                try
-                                                {
-                                                    data = data.Substring(0, n);
-                                                    data = data.Substring(Math.Max(data.LastIndexOf("\n"), data.LastIndexOf("\r")) + 1);
-                                                    for (int i = 0; i < data.Length; i++)
-                                                    {
-                                                        if (!char.IsDigit(data[i]))
-                                                        {
-                                                            data = data.Remove(i, 1);
-                                                            i--;
-                                                        }
-                                                    }
-                                                    worksheet.SetValue(count + 2, ozonFields["comments"].Column, int.Parse(data));
-                                                }
-                                                catch
+                                                else
                                                 {
                                                     worksheet.SetValue(count + 2, ozonFields["comments"].Column, 0);
                                                 }
                                             }
-                                            else
+                                            catch { }
+                                            count++;
+                                            lock (lockObj)
                                             {
-                                                worksheet.SetValue(count + 2, ozonFields["comments"].Column, 0);
+                                                this.count++;
                                             }
-                                        }
-                                        catch { }
-                                        count++;
-                                        lock (lockObj)
-                                        {
-                                            this.count++;
-                                        }
-                                        this.Invoke(new Action(() =>
-                                        {
-                                            ozonProgressBar.Value = 100 * count / maxCount;
-                                            label8.Text = Math.Round(100.0 * count / maxCount, 1).ToString().Replace(",", ".") + "%";
-                                        }));
+                                            this.Invoke(new Action(() =>
+                                            {
+                                                ozonProgressBar.Value = 100 * count / maxCount;
+                                                label8.Text = Math.Round(100.0 * count / maxCount, 1).ToString().Replace(",", ".") + "%";
+                                            }));
 
+                                            if (count == maxCount)
+                                                break;
+                                        }
                                         if (count == maxCount)
                                             break;
-                                    }
-                                    if (count == maxCount)
-                                        break;
-                                    if (nextUrl == null)
-                                        break;
-                                    while (true)
-                                    {
-                                        try
-                                        {
-                                            driver.Navigate().GoToUrl(nextUrl);
+                                        if (nextUrl == null)
                                             break;
-                                        }
-                                        catch
+                                        while (true)
                                         {
                                             try
                                             {
-                                                driver?.Close();
-                                                driver?.Quit();
+                                                driver.Navigate().GoToUrl(nextUrl);
+                                                break;
                                             }
-                                            catch { }
-                                            try
+                                            catch(Exception ex)
                                             {
-                                                driver = CreateDriver();
-                                                driver.Manage().Window.Minimize();
+                                                try
+                                                {
+                                                    file.WriteLine(CreateExceptionString(ex) + count);
+                                                }
+                                                catch { }
+                                                try
+                                                {
+                                                    driver?.Close();
+                                                    driver?.Quit();
+                                                }
+                                                catch 
+                                                {
+                                                }
+                                                try
+                                                {
+                                                    driver = CreateDriver();
+                                                    driver.Manage().Window.Minimize();
+                                                }
+                                                catch { }
                                             }
-                                            catch { }
                                         }
                                     }
+                                    catch
+                                    { }
                                 }
-                                catch
-                                { }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            try
+                            catch (Exception ex)
                             {
-                                this.Invoke(new Action(() =>
+                                try
                                 {
-                                    MessageBox.Show(ex.Message, "Непредвиденная ошибка (OZON)", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }));
+                                    file.WriteLine(CreateExceptionString(ex));
+                                }
+                                catch { }
+                                try
+                                {
+                                    this.Invoke(new Action(() =>
+                                    {
+                                        MessageBox.Show(ex.Message, "Непредвиденная ошибка (OZON)", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }));
+                                }
+                                catch(Exception ex2)
+                                {
+                                    try
+                                    {
+                                        file.WriteLine(CreateExceptionString(ex2));
+                                    }
+                                    catch { }
+                                }
                             }
-                            catch
-                            {
-                            
-                            }
+                            worksheet.Cells[1, 1, count + 1, ozonFields.Count].AutoFitColumns();
                         }
-                        worksheet.Cells[1, 1, count + 1, ozonFields.Count].AutoFitColumns();
-                    }
-                    else
-                    {
-                        this.Invoke(new Action(() =>
+                        else
                         {
-                            MessageBox.Show("По вашему запросу ничего не найдено (OZON)", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }));
+                            this.Invoke(new Action(() =>
+                            {
+                                MessageBox.Show("По вашему запросу ничего не найдено (OZON)", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            }));
+                        }
                     }
-                }
-                catch
-                {
+                    catch(Exception ex)
+                    {
+                        try
+                        {
+                            file.WriteLine(CreateExceptionString(ex));
+                        }
+                        catch { }
+                    }
                 }
                 try
                 {
