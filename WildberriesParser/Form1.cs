@@ -50,61 +50,61 @@ namespace WildberriesParser
 
         public Form1()
         {
-                foreach (var process in Process.GetProcesses())
+            foreach (var process in Process.GetProcesses())
+            {
+                try
                 {
-                    try
+                    if (process.ProcessName == "chromedriver" || process.ProcessName == "chrome")
                     {
-                        if (process.ProcessName == "chromedriver" || process.ProcessName == "chrome")
-                        {
-                            process.Kill();
-                        }
+                        process.Kill();
                     }
-                    catch { }
                 }
+                catch { }
+            }
 
-                HttpClient client = new HttpClient(new HttpClientHandler() { AllowAutoRedirect = true });
+            HttpClient client = new HttpClient(new HttpClientHandler() { AllowAutoRedirect = true });
 
-                ExcelPackage.LicenseContext = LicenseContext.Commercial;
+            ExcelPackage.LicenseContext = LicenseContext.Commercial;
 
-                InitializeComponent();
+            InitializeComponent();
 
-                saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create);
+            saveFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create);
 
-                toolTip1.SetToolTip(WBPictureBox, "https://wildberries.ru");
-                toolTip1.SetToolTip(ozonPictureBox, "https://ozon.ru");
-                toolTip1.SetToolTip(beruPictureBox, "https://beru.ru");
+            toolTip1.SetToolTip(WBPictureBox, "https://wildberries.ru");
+            toolTip1.SetToolTip(ozonPictureBox, "https://ozon.ru");
+            toolTip1.SetToolTip(beruPictureBox, "https://beru.ru");
 
-                int delta = searchButton.Left - queryTextBox.Right;
-                searchButton.Left = this.ClientSize.Width - searchButton.Width - queryTextBox.Left + 2;
-                queryTextBox.Width = searchButton.Left - queryTextBox.Left - delta + 2;
-                searchButton.Height = queryTextBox.Height + 2;
-                searchButton.Top = queryTextBox.Top - 1;
-                tableLayoutPanel1.Left = 12;
-                tableLayoutPanel1.Top = queryTextBox.Bottom + 12;
-                tableLayoutPanel1.Width = this.ClientSize.Width - 24;
-                tableLayoutPanel1.Height = this.ClientSize.Height - tableLayoutPanel1.Top - 12;
+            int delta = searchButton.Left - queryTextBox.Right;
+            searchButton.Left = this.ClientSize.Width - searchButton.Width - queryTextBox.Left + 2;
+            queryTextBox.Width = searchButton.Left - queryTextBox.Left - delta + 2;
+            searchButton.Height = queryTextBox.Height + 2;
+            searchButton.Top = queryTextBox.Top - 1;
+            tableLayoutPanel1.Left = 12;
+            tableLayoutPanel1.Top = queryTextBox.Bottom + 12;
+            tableLayoutPanel1.Width = this.ClientSize.Width - 24;
+            tableLayoutPanel1.Height = this.ClientSize.Height - tableLayoutPanel1.Top - 12;
 
-                queryTextBox.GotFocus += TextBox1_GotFocus;
-                queryTextBox.LostFocus += TextBox1_LostFocus;
-                WBCountTextBox.GotFocus += WBCountTextBox_GotFocus;
-                WBCountTextBox.LostFocus += WBCountTextBox_LostFocus;
-                ozonCountTextBox.GotFocus += OzonCountTextBox_GotFocus;
-                ozonCountTextBox.LostFocus += OzonCountTextBox_LostFocus;
-                beruCountTextBox.GotFocus += BeruCountTextBox_GotFocus;
-                beruCountTextBox.LostFocus += BeruCountTextBox_LostFocus;
+            queryTextBox.GotFocus += TextBox1_GotFocus;
+            queryTextBox.LostFocus += TextBox1_LostFocus;
+            WBCountTextBox.GotFocus += WBCountTextBox_GotFocus;
+            WBCountTextBox.LostFocus += WBCountTextBox_LostFocus;
+            ozonCountTextBox.GotFocus += OzonCountTextBox_GotFocus;
+            ozonCountTextBox.LostFocus += OzonCountTextBox_LostFocus;
+            beruCountTextBox.GotFocus += BeruCountTextBox_GotFocus;
+            beruCountTextBox.LostFocus += BeruCountTextBox_LostFocus;
 
-                SetWBDictonaries();
-                SetOzonDictonaries();
-                SetBeruDictonaries();
+            SetWBDictonaries();
+            SetOzonDictonaries();
+            SetBeruDictonaries();
 
-                queryTextBox.Tag = false;
-                WBCountTextBox.Tag = false;
-                ozonCountTextBox.Tag = false;
-                beruCountTextBox.Tag = false;
+            queryTextBox.Tag = false;
+            WBCountTextBox.Tag = false;
+            ozonCountTextBox.Tag = false;
+            beruCountTextBox.Tag = false;
 
-                WBComboBox.SelectedIndex = 0;
-                ozonComboBox.SelectedIndex = 0;
-                beruComboBox.SelectedIndex = 0;
+            WBComboBox.SelectedIndex = 0;
+            ozonComboBox.SelectedIndex = 0;
+            beruComboBox.SelectedIndex = 0;
         }
 
         private ChromeDriver CreateDriver()
@@ -113,7 +113,8 @@ namespace WildberriesParser
             service.HideCommandPromptWindow = true;
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--window-position=-20000,-20000");
-            
+            options.AddArgument("--no-sandbox");
+
             return new ChromeDriver(service, options);
         }
 
@@ -268,7 +269,7 @@ namespace WildberriesParser
                                   commonProgressBar.Invoke(new Action(() =>
                                   {
                                       commonProgressBar.Value = count * 100 / maxCount;
-                                      label10.Text = d.Replace(",", ".") + "%";                           
+                                      label10.Text = d.Replace(",", ".") + "%";
                                   }));
 
                                   prev = d;
@@ -300,7 +301,7 @@ namespace WildberriesParser
                               commonProgressBar.Invoke(new Action(() =>
                               {
                                   commonProgressBar.Value = count * 100 / maxCount;
-                                  label10.Text = d.Replace(",", ".") + "%"; 
+                                  label10.Text = d.Replace(",", ".") + "%";
                               }));
 
                               prev = d;
@@ -559,7 +560,7 @@ namespace WildberriesParser
                     label9.Visible = false;
                 }
                 searchButton.Text = "Стоп";
-                searchButton.BackColor = Color.FromArgb(246,26,26);
+                searchButton.BackColor = Color.FromArgb(246, 26, 26);
                 stop = false;
                 foreach (var thread in parsers)
                 {
@@ -570,14 +571,14 @@ namespace WildberriesParser
             }
             else
             {
-                if(searchButton.Text=="Стоп")
+                if (searchButton.Text == "Стоп")
                 {
-                    if(stop)
+                    if (stop)
                     {
                         MessageBox.Show("Парсинг уже останаваливается", "Подождите", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
-                    if(MessageBox.Show("Вы точно хотите остановить парсинг","Опасность",MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                    if (MessageBox.Show("Вы точно хотите остановить парсинг", "Опасность", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                     {
                         stop = true;
                     }
@@ -896,7 +897,7 @@ namespace WildberriesParser
                                                         data = data.Substring(0, data.IndexOf("</span>"));
                                                         for (int i = 0; i < data.Length; i++)
                                                         {
-                                                            if (!char.IsDigit(data[i])&&data[i]!='.')
+                                                            if (!char.IsDigit(data[i]) && data[i] != '.')
                                                             {
                                                                 data = data.Remove(i, 1);
                                                                 i--;
@@ -970,7 +971,7 @@ namespace WildberriesParser
                                             driver.Navigate().GoToUrl(nextUrl);
                                             break;
                                         }
-                                        catch 
+                                        catch
                                         {
                                             try
                                             {
@@ -1023,7 +1024,6 @@ namespace WildberriesParser
         {
             return new Thread(() =>
             {
-            int a = 0;
                 if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON")))
                     Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON"));
                 ChromeDriver driver = CreateDriver();
@@ -1038,27 +1038,10 @@ namespace WildberriesParser
                         try
                         {
                             driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={query}");
-                            try
-                            {
-                                using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                { }
-                                driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                a++;
-                            }
-                            catch { }
-            break;
+                            break;
                         }
-                        catch 
+                        catch
                         {
-                            try
-                            {
-                                using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                { }
-                                driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                a++;
-                            }
-                            catch { }
-
                             try
                             {
                                 driver?.Close();
@@ -1071,23 +1054,15 @@ namespace WildberriesParser
                     }
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     Thread.Sleep(1000);
-                    while(driver.PageSource.Replace("'","\"").Contains("<meta name=\"ROBOTS\""))
+                    while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
                     {
                         driver.Manage().Window.Position = new Point(0, 0);
                         driver.Manage().Window.Maximize();
-                        MessageBox.Show("Подтвердите, что я не робот","Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     driver.Manage().Window.Position = new Point(-20000, -20000);
                     driver.Manage().Window.Minimize();
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                    try
-                    {
-                        using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                        { }
-                        driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                        a++;
-                    }
-                    catch { }
 
                     request = driver.Url + $"&sorting={sort}";
                     while (true)
@@ -1095,28 +1070,10 @@ namespace WildberriesParser
                         try
                         {
                             driver.Navigate().GoToUrl(request);
-                            try
-                            {
-                                using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                { }
-                                driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                a++;
-                            }
-                            catch { }
-
                             break;
                         }
                         catch
                         {
-                            try
-                            {
-                                using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                { }
-                                driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                a++;
-                            }
-                            catch { }
-
                             try
                             {
                                 driver?.Close();
@@ -1128,14 +1085,6 @@ namespace WildberriesParser
                         }
                     }
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                    try
-                    {
-                        using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                        { }
-                        driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                        a++;
-                    }
-                    catch { }
 
                     Thread.Sleep(1000);
                     while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
@@ -1149,15 +1098,6 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     string html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
                     int n = html.IndexOf("data-widget=\"fulltextResultsHeader\"");
-                    try
-                    {
-                        using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                        { }
-                        driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                        a++;
-                    }
-                    catch { }
-
 
                     if (n >= 0)
                     {
@@ -1197,7 +1137,7 @@ namespace WildberriesParser
                             {
                                 ozonProgressBar.Value = 0;
                                 label8.Text = "0%";
-                            } 
+                            }
                         }));
 
                         ReadOnlyCollection<IWebElement> items;
@@ -1224,14 +1164,6 @@ namespace WildberriesParser
                                 try
                                 {
                                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                    try
-                                    {
-                                        using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                        { }
-                                        driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                        a++;
-                                    }
-                                    catch { }
 
                                     while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
                                     {
@@ -1242,15 +1174,10 @@ namespace WildberriesParser
                                     driver.Manage().Window.Position = new Point(-20000, -20000);
                                     driver.Manage().Window.Minimize();
                                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                    using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                    { }
-                                    driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                    a++;
-
                                     html = driver.PageSource.Replace("'", "\"");
                                     n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                     data = "f";
-                                    if(!pages.Add(driver.Url))
+                                    if (!pages.Add(driver.Url))
                                     {
                                         break;
                                     }
@@ -1285,20 +1212,10 @@ namespace WildberriesParser
                                                 try
                                                 {
                                                     driver.Navigate().GoToUrl(url);
-                                                    using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                                    { }
-                                                    driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                                    a++;
-
                                                     break;
                                                 }
                                                 catch
                                                 {
-                                                    using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                                    { }
-                                                    driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                                    a++;
-
                                                     try
                                                     {
                                                         driver?.Close();
@@ -1314,11 +1231,6 @@ namespace WildberriesParser
                                                 }
                                             }
                                             wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                            using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                            { }
-                                            driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                            a++;
-
                                             while (driver.PageSource.Replace("'", "\"").Contains("<meta name=\"ROBOTS\""))
                                             {
                                                 driver.Manage().Window.Position = new Point(0, 0);
@@ -1437,7 +1349,7 @@ namespace WildberriesParser
                                                 }
                                                 catch { }
                                             }
-                                            data = driver.Title??"";
+                                            data = driver.Title ?? "";
                                             n = data.IndexOf(" — купить");
                                             if (n >= 0)
                                             {
@@ -1448,6 +1360,10 @@ namespace WildberriesParser
                                                     cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute) { Display = data };
                                                 }
                                                 catch { }
+                                            }
+                                            else
+                                            {
+                                                Clipboard.SetText(Clipboard.GetText() + driver.Title ?? "bad");
                                             }
                                             data = text;
                                             n = data.IndexOf("Код товара:");
@@ -1608,7 +1524,7 @@ namespace WildberriesParser
                                         this.Invoke(new Action(() =>
                                         {
                                             ozonProgressBar.Value = 100 * count / maxCount;
-                                            label8.Text = Math.Round(100.0 * count / maxCount, 1).ToString().Replace(",",".")+"%";
+                                            label8.Text = Math.Round(100.0 * count / maxCount, 1).ToString().Replace(",", ".") + "%";
                                         }));
 
                                         if (count == maxCount)
@@ -1623,20 +1539,10 @@ namespace WildberriesParser
                                         try
                                         {
                                             driver.Navigate().GoToUrl(nextUrl);
-                                            using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                            { }
-                                            driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                            a++;
-
                                             break;
                                         }
-                                        catch 
+                                        catch
                                         {
-                                            using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png")))
-                                            { }
-                                            driver.GetScreenshot().SaveAsFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON", a.ToString() + ".png"));
-                                            a++;
-
                                             try
                                             {
                                                 driver?.Close();
@@ -1665,7 +1571,10 @@ namespace WildberriesParser
                                     MessageBox.Show(ex.Message, "Непредвиденная ошибка (OZON)", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 }));
                             }
-                            catch { }
+                            catch
+                            {
+                            
+                            }
                         }
                         worksheet.Cells[1, 1, count + 1, ozonFields.Count].AutoFitColumns();
                     }
@@ -1677,7 +1586,9 @@ namespace WildberriesParser
                         }));
                     }
                 }
-                catch { }
+                catch
+                {
+                }
                 try
                 {
                     driver?.Close();
@@ -1686,6 +1597,11 @@ namespace WildberriesParser
                 catch { }
                 parsers.Remove(Thread.CurrentThread);
             });
+        }
+
+        private string CreateExceptionString(Exception ex)
+        {
+            return "[" + DateTime.Now.ToString("HH::mm::ss") + "] " + (ex?.Message ?? "") + " ";
         }
 
         public Thread GetBeruParser(string query, int maxCount, string sort, ExcelPackage package)
@@ -1732,7 +1648,7 @@ namespace WildberriesParser
                             driver.Navigate().GoToUrl(request);
                             break;
                         }
-                        catch 
+                        catch
                         {
                             try
                             {
@@ -1880,7 +1796,7 @@ namespace WildberriesParser
                                                     driver.Navigate().GoToUrl(url);
                                                     break;
                                                 }
-                                                catch 
+                                                catch
                                                 {
                                                     try
                                                     {
@@ -2019,7 +1935,7 @@ namespace WildberriesParser
                                                 {
                                                     data = text;
                                                     n = data.IndexOf("Продавец товара\r\n");
-                                                    if(n>=0)
+                                                    if (n >= 0)
                                                     {
                                                         data = data.Substring(n + "Продавец товара\r\n".Length);
                                                         try
@@ -2298,7 +2214,7 @@ namespace WildberriesParser
                                             driver.Navigate().GoToUrl(nextUrl);
                                             break;
                                         }
-                                        catch 
+                                        catch
                                         {
                                             try
                                             {
@@ -2415,7 +2331,7 @@ namespace WildberriesParser
             {
                 try
                 {
-                    if (package!=null &&package.Workbook.Worksheets.Count > 0)
+                    if (package != null && package.Workbook.Worksheets.Count > 0)
                     {
                         if (!Directory.Exists("outFiles"))
                             Directory.CreateDirectory("outFiles");
@@ -2442,7 +2358,7 @@ namespace WildberriesParser
 
         private void queryTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == System.Windows.Forms.Keys.Enter&&searchButton.Text=="Поиск")
+            if (e.KeyCode == System.Windows.Forms.Keys.Enter && searchButton.Text == "Поиск")
             {
                 e.SuppressKeyPress = true;
                 button1_Click(null, null);
