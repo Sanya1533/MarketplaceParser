@@ -712,6 +712,11 @@ namespace WildberriesParser
                                     {
                                         urls.Add(item.GetAttribute("href"));
                                     }
+                                    items = driver.FindElementsByCssSelector("a[class='ref_goods_n_p j-open-full-product-card is-adult']");
+                                    foreach (var item in items)
+                                    {
+                                           urls.Add(item.GetAttribute("href"));
+                                    }
                                     if (driver.PageSource.Replace("'", "\"").Contains("<a class=\"pagination-next\""))
                                     {
                                         try
