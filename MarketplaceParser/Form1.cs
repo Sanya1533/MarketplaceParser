@@ -49,6 +49,8 @@ namespace WildberriesParser
 
         private bool saved = false;
 
+        private List<int> specialSymbols = new List<int>() { 36, 38, 43, 44, 47, 58, 59, 61, 63, 64, 32, 34, 60, 62, 35, 37, 123, 125, 124, 92, 94, 126, 91, 93, 96 };
+
         public Form1()
         {
             foreach (var process in Process.GetProcesses())
@@ -405,6 +407,23 @@ namespace WildberriesParser
             thread.Start();
         }
 
+        private string GetFormattedString(string query)
+        {
+            string ans = "";
+            foreach(var q in query)
+            {
+                if(specialSymbols.Contains((int)q))
+                {
+                    ans += "%" + Convert.ToString((int)q, 16);
+                }
+                else
+                {
+                    ans += q;
+                }
+            }
+            return ans;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (searchButton.Text == "Поиск")
@@ -601,7 +620,7 @@ namespace WildberriesParser
                     {
                         try
                         {
-                            request = new HttpClient(new HttpClientHandler() { AllowAutoRedirect = true }).GetAsync($"https://www.wildberries.ru/catalog/0/search.aspx?search={query}").Result.RequestMessage.RequestUri.AbsoluteUri;
+                            request = new HttpClient(new HttpClientHandler() { AllowAutoRedirect = true }).GetAsync($"https://www.wildberries.ru/catalog/0/search.aspx?search={GetFormattedString(query)}").Result.RequestMessage.RequestUri.AbsoluteUri;
                             break;
                         }
                         catch { }
@@ -741,6 +760,8 @@ namespace WildberriesParser
                                             break;
                                         try
                                         {
+                                            if (url == null)
+                                                continue;
                                             price = -1;
                                             while (true)
                                             {
@@ -1046,7 +1067,7 @@ namespace WildberriesParser
                         {
                             try
                             {
-                                driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={query}");
+                                driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={GetFormattedString(query)}");
                                 break;
                             }
                             catch(Exception ex)
@@ -1214,7 +1235,69 @@ namespace WildberriesParser
                                         urls.Clear();
                                         foreach (var item in items)
                                         {
-                                            urls.Add(item.GetAttribute("href"));
+                                            try
+                                            {
+                                                data = item.GetAttribute("href");
+                                                if (data != null)
+                                                {
+                                                    urls.Add(data);
+                                                }
+                                                else
+                                                {
+                                                    item.Click();
+                                                    while (true)
+                                                    {
+                                                        html = driver.PageSource.Replace("'", "\"");
+                                                        if (html.LastIndexOf("</script>") < html.LastIndexOf("<div"))
+                                                            break;
+                                                    }
+                                                    html = html.Substring(html.LastIndexOf("<button"));
+                                                    html = html.Substring(html.IndexOf("<div"));
+                                                    html = html.Substring(html.IndexOf("class=\"") + "class=\"".Length);
+                                                    html = html.Substring(0, html.IndexOf("\""));
+                                                    price = -1;
+                                                    brandElement = null;
+                                                    foreach(var elem in driver.FindElementsByCssSelector("div[class='vue-portal-target']"))
+                                                    {
+                                                        n = driver.PageSource.Replace("'", "\"").IndexOf(elem.GetAttribute("innerHTML").Replace("'", "\""));
+                                                        if(n>price)
+                                                        {
+                                                            price = n;
+                                                            brandElement = elem;
+                                                        }
+                                                    }
+                                                    brandElement.FindElement(By.CssSelector($"div[class='{html}']")).Click();
+                                                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                                    html = driver.PageSource.Replace("'", "\"");
+                                                    n = html.IndexOf("data-widget=\"searchResultsV2\"");
+                                                    if (n >= 0)
+                                                    {
+                                                        data = html.Substring(n + "data-widget=\"searchResultsV2\"".Length);
+                                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                                        data = data.Substring(data.IndexOf("<div"));
+                                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                                        data = data.Substring(data.IndexOf("<a") + 2);
+                                                        data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
+                                                        data = data.Substring(0, data.IndexOf("\""));
+                                                    }
+                                                    urls.Clear();
+                                                    foreach (var item2 in driver.FindElementsByCssSelector($"a[class='{data}']"))
+                                                    {
+                                                        try
+                                                        {
+                                                            data = item2.GetAttribute("href");
+                                                            if (data != null)
+                                                            {
+                                                                urls.Add(data);
+                                                            }
+                                                        }
+                                                        catch { }
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                            catch
+                                            { }
                                         }
                                         nextUrl = null;
                                         page++;
@@ -1225,6 +1308,8 @@ namespace WildberriesParser
                                                 break;
                                             try
                                             {
+                                                if (url == null)
+                                                    continue;
                                                 price = -1;
                                                 while (true)
                                                 {
@@ -1665,7 +1750,7 @@ namespace WildberriesParser
                     {
                         try
                         {
-                            driver.Navigate().GoToUrl($"https://beru.ru/search?cvredirect=2&text={query}");
+                            driver.Navigate().GoToUrl($"https://beru.ru/search?cvredirect=2&text={GetFormattedString(query)}");
                             break;
                         }
                         catch
@@ -1834,6 +1919,8 @@ namespace WildberriesParser
                                             break;
                                         try
                                         {
+                                            if (url == null)
+                                                continue;
                                             price = -1;
                                             while (true)
                                             {
