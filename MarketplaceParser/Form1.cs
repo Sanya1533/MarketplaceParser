@@ -689,6 +689,10 @@ namespace WildberriesParser
                         {
                             maxCount = 5000;
                         }
+                        this.Invoke(new Action(() =>
+                        {
+                            WBCountTextBox.Text = maxCount.ToString();
+                        }));
                         lock (lockObj)
                         {
                             this.maxCount += maxCount;
@@ -1170,6 +1174,10 @@ namespace WildberriesParser
                             {
                                 maxCount = 9972;
                             }
+                            this.Invoke(new Action(() =>
+                            {
+                                ozonCountTextBox.Text = maxCount.ToString();
+                            }));
                             lock (lockObj)
                             {
                                 this.maxCount += maxCount;
@@ -1885,6 +1893,10 @@ namespace WildberriesParser
                         {
                             this.maxCount += maxCount;
                         }
+                        this.Invoke(new Action(() =>
+                        {
+                            beruCountTextBox.Text = maxCount.ToString();
+                        }));
                         int count = 0;
                         this.Invoke(new Action(() =>
                         {
