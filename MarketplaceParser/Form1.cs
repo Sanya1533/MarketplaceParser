@@ -1367,7 +1367,7 @@ namespace WildberriesParser
 
                                                 while (!html.Contains("</div>"))
                                                 {
-                                                    html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ");
+                                                    html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ").Replace("&quot;","\"");
                                                 }
                                                 Thread.Sleep(100);
                                                 worksheet.SetValue(count + 2, ozonFields["query"].Column, query);
@@ -1468,21 +1468,21 @@ namespace WildberriesParser
                                                     }
                                                     catch { }
                                                 }
-                                                data = driver.Title ?? "";
-                                                n = data.IndexOf(" — купить");
+                                                data = html;
+                                                n = data.IndexOf("data-widget=\"webProductHeading\"");
                                                 if (n >= 0)
                                                 {
                                                     try
                                                     {
-                                                        data = data.Substring(0, n);
+                                                        data = data.Substring(n);
+                                                        data = data.Substring(data.IndexOf("<h1"));
+                                                        data = data.Substring(data.IndexOf(">")+1);
+                                                        data = data.Substring(0,data.IndexOf("</h1>"));
                                                         cell = worksheet.Cells[count + 2, ozonFields["name"].Column];
                                                         cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute) { Display = data };
                                                     }
-                                                    catch { }
-                                                }
-                                                else
-                                                {
-                                                    Clipboard.SetText(Clipboard.GetText() + driver.Title ?? "bad");
+                                                    catch
+                                                    { }
                                                 }
                                                 data = text;
                                                 n = data.IndexOf("Код товара:");
@@ -1634,7 +1634,8 @@ namespace WildberriesParser
                                                     worksheet.SetValue(count + 2, ozonFields["comments"].Column, 0);
                                                 }
                                             }
-                                            catch { }
+                                            catch 
+                                            { }
                                             count++;
                                             lock (lockObj)
                                             {
