@@ -117,6 +117,7 @@ namespace WildberriesParser
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--window-position=-20000,-20000");
             options.AddArgument("--no-sandbox");
+            options.AddArgument("no-sandbox");
 
             return new ChromeDriver(service, options);
         }
@@ -1202,13 +1203,16 @@ namespace WildberriesParser
                             IWebElement brandElement;
                             int price;
                             HashSet<string> pages = new HashSet<string>();
+                            long height;
                             try
                             {
                                 string data2;
                                 while (true)
                                 {
                                     if (stop)
+                                    {
                                         break;
+                                    }
                                     try
                                     {
                                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
@@ -1222,6 +1226,18 @@ namespace WildberriesParser
                                         driver.Manage().Window.Position = new Point(-20000, -20000);
                                         driver.Manage().Window.Minimize();
                                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                        height = 2;
+                                        Thread.Sleep(100);
+                                        for (long i = 1; i <= height; i+=20)
+                                        {
+                                            try
+                                            {
+                                                ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollTo(0,{i})");
+                                                height = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight");
+
+                                            }
+                                            catch { }
+                                            }
                                         html = driver.PageSource.Replace("'", "\"");
                                         n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                         data = "f";
@@ -1308,7 +1324,9 @@ namespace WildberriesParser
                                             { }
                                         }
                                         if (urls.Count == 0)
+                                        {
                                             break;
+                                        }
                                         nextUrl = null;
                                         page++;
                                         nextUrl = request + $"&page={page}";
@@ -1319,7 +1337,9 @@ namespace WildberriesParser
                                             try
                                             {
                                                 if (url == null)
+                                                {
                                                     continue;
+                                                }
                                                 price = -1;
                                                 while (true)
                                                 {
@@ -1634,7 +1654,7 @@ namespace WildberriesParser
                                                     worksheet.SetValue(count + 2, ozonFields["comments"].Column, 0);
                                                 }
                                             }
-                                            catch 
+                                            catch (Exception ex)
                                             { }
                                             count++;
                                             lock (lockObj)
@@ -1651,9 +1671,13 @@ namespace WildberriesParser
                                                 break;
                                         }
                                         if (count == maxCount)
+                                        {
                                             break;
+                                        }
                                         if (nextUrl == null)
+                                        {
                                             break;
+                                        }
                                         while (true)
                                         {
                                             try
