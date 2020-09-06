@@ -410,9 +410,9 @@ namespace WildberriesParser
         private string GetFormattedString(string query)
         {
             string ans = "";
-            foreach(var q in query)
+            foreach (var q in query)
             {
-                if(specialSymbols.Contains((int)q))
+                if (specialSymbols.Contains((int)q))
                 {
                     ans += "%" + Convert.ToString((int)q, 16);
                 }
@@ -684,6 +684,10 @@ namespace WildberriesParser
                         {
                             maxCount = n;
                         }
+                        if (maxCount > 5000)
+                        {
+                            maxCount = 5000;
+                        }
                         lock (lockObj)
                         {
                             this.maxCount += maxCount;
@@ -735,7 +739,7 @@ namespace WildberriesParser
                                     items = driver.FindElementsByCssSelector("a[class='ref_goods_n_p j-open-full-product-card is-adult']");
                                     foreach (var item in items)
                                     {
-                                           urls.Add(item.GetAttribute("href"));
+                                        urls.Add(item.GetAttribute("href"));
                                     }
                                     if (driver.PageSource.Replace("'", "\"").Contains("<a class=\"pagination-next\""))
                                     {
@@ -1070,7 +1074,7 @@ namespace WildberriesParser
                                 driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={GetFormattedString(query)}");
                                 break;
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 try
                                 {
@@ -1107,7 +1111,7 @@ namespace WildberriesParser
                                 driver.Navigate().GoToUrl(request);
                                 break;
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 try
                                 {
@@ -1160,6 +1164,10 @@ namespace WildberriesParser
                             if (maxCount < 0 || n < maxCount)
                             {
                                 maxCount = n;
+                            }
+                            if(maxCount>9972)
+                            {
+                                maxCount = 9972;
                             }
                             lock (lockObj)
                             {
@@ -1257,10 +1265,10 @@ namespace WildberriesParser
                                                     html = html.Substring(0, html.IndexOf("\""));
                                                     price = -1;
                                                     brandElement = null;
-                                                    foreach(var elem in driver.FindElementsByCssSelector("div[class='vue-portal-target']"))
+                                                    foreach (var elem in driver.FindElementsByCssSelector("div[class='vue-portal-target']"))
                                                     {
                                                         n = driver.PageSource.Replace("'", "\"").IndexOf(elem.GetAttribute("innerHTML").Replace("'", "\""));
-                                                        if(n>price)
+                                                        if (n > price)
                                                         {
                                                             price = n;
                                                             brandElement = elem;
@@ -1299,6 +1307,8 @@ namespace WildberriesParser
                                             catch
                                             { }
                                         }
+                                        if (urls.Count == 0)
+                                            break;
                                         nextUrl = null;
                                         page++;
                                         nextUrl = request + $"&page={page}";
@@ -1318,7 +1328,7 @@ namespace WildberriesParser
                                                         driver.Navigate().GoToUrl(url);
                                                         break;
                                                     }
-                                                    catch(Exception ex)
+                                                    catch (Exception ex)
                                                     {
                                                         try
                                                         {
@@ -1650,7 +1660,7 @@ namespace WildberriesParser
                                                 driver.Navigate().GoToUrl(nextUrl);
                                                 break;
                                             }
-                                            catch(Exception ex)
+                                            catch (Exception ex)
                                             {
                                                 try
                                                 {
@@ -1662,7 +1672,7 @@ namespace WildberriesParser
                                                     driver?.Close();
                                                     driver?.Quit();
                                                 }
-                                                catch 
+                                                catch
                                                 {
                                                 }
                                                 try
@@ -1692,7 +1702,7 @@ namespace WildberriesParser
                                         MessageBox.Show(ex.Message, "Непредвиденная ошибка (OZON)", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }));
                                 }
-                                catch(Exception ex2)
+                                catch (Exception ex2)
                                 {
                                     try
                                     {
@@ -1711,7 +1721,7 @@ namespace WildberriesParser
                             }));
                         }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         try
                         {
@@ -1841,6 +1851,10 @@ namespace WildberriesParser
                         if (maxCount < 0 || n < maxCount)
                         {
                             maxCount = n;
+                        }
+                        if (maxCount > 1200)
+                        {
+                            maxCount = 1200;
                         }
                         lock (lockObj)
                         {
