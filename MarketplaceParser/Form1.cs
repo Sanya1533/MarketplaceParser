@@ -1211,7 +1211,6 @@ namespace WildberriesParser
                             IWebElement brandElement;
                             int price;
                             HashSet<string> pages = new HashSet<string>();
-                            long height;
                             Stopwatch stopwatch = new Stopwatch();
                             try
                             {
@@ -1235,18 +1234,7 @@ namespace WildberriesParser
                                         driver.Manage().Window.Position = new Point(-20000, -20000);
                                         driver.Manage().Window.Minimize();
                                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                        height = 8100;
                                         Thread.Sleep(1000);
-                                        for (long i = 1; i <= height; i += 10)
-                                        {
-                                            try
-                                            {
-                                                ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollTo(0,{i})");
-                                                height = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight");
-
-                                            }
-                                            catch { }
-                                        }
                                         html = driver.PageSource.Replace("'", "\"");
                                         n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                         data = "f";
