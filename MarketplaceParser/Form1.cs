@@ -1197,7 +1197,7 @@ namespace WildberriesParser
                                 }
                             }));
 
-                            ReadOnlyCollection<IWebElement> items;
+                            ReadOnlyCollection<IWebElement> items, items2;
                             List<string> urls = new List<string>();
                             string nextUrl;
                             int page = 1;
@@ -1211,7 +1211,7 @@ namespace WildberriesParser
                             IWebElement brandElement;
                             int price;
                             HashSet<string> pages = new HashSet<string>();
-                            long height;
+                            Stopwatch stopwatch = new Stopwatch();
                             try
                             {
                                 string data2;
@@ -1234,18 +1234,7 @@ namespace WildberriesParser
                                         driver.Manage().Window.Position = new Point(-20000, -20000);
                                         driver.Manage().Window.Minimize();
                                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                        height = 2;
-                                        Thread.Sleep(100);
-                                        for (long i = 1; i <= height; i+=20)
-                                        {
-                                            try
-                                            {
-                                                ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollTo(0,{i})");
-                                                height = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight");
-
-                                            }
-                                            catch { }
-                                            }
+                                        Thread.Sleep(1000);
                                         html = driver.PageSource.Replace("'", "\"");
                                         n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                         data = "f";
@@ -1263,7 +1252,13 @@ namespace WildberriesParser
                                             data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
                                             data = data.Substring(0, data.IndexOf("\""));
                                         }
-                                        items = driver.FindElementsByCssSelector($"a[class='{data}']");
+                                        stopwatch.Restart();
+                                        do
+                                        {
+                                            items = driver.FindElementsByCssSelector($"a[class='{data}']");
+                                        }
+                                        while (items.Count != 36 && items.Count +count != maxCount&&stopwatch.Elapsed.TotalSeconds<1);
+                                        stopwatch.Stop();
                                         urls.Clear();
                                         foreach (var item in items)
                                         {
@@ -1313,7 +1308,14 @@ namespace WildberriesParser
                                                         data = data.Substring(0, data.IndexOf("\""));
                                                     }
                                                     urls.Clear();
-                                                    foreach (var item2 in driver.FindElementsByCssSelector($"a[class='{data}']"))
+                                                    stopwatch.Restart();
+                                                    do
+                                                    {
+                                                        items2 = driver.FindElementsByCssSelector($"a[class='{data}']");
+                                                    }
+                                                    while (items2.Count != 36 && items2.Count + count != maxCount && stopwatch.Elapsed.TotalSeconds < 1);
+                                                    stopwatch.Stop();
+                                                    foreach (var item2 in items2)
                                                     {
                                                         try
                                                         {
