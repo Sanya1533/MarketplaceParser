@@ -245,166 +245,166 @@ namespace WildberriesParser
         private void StartCommonProgress()
         {
             Thread thread = new Thread(() =>
-              {
-                  try
-                  {
-                      string d = "";
-                      string prev = "";
-                      while (!commonStop)
-                      {
-                          if (maxCount == 0)
-                          {
-                              if (prev != "0")
-                              {
-                                  commonProgressBar.Invoke(new Action(() =>
-                                  {
-                                      commonProgressBar.Value = 0;
-                                      label10.Text = "0%";
-                                  }));
+            {
+                try
+                {
+                    string d = "";
+                    string prev = "";
+                    while (!commonStop)
+                    {
+                        if (maxCount == 0)
+                        {
+                            if (prev != "0")
+                            {
+                                commonProgressBar.Invoke(new Action(() =>
+                                {
+                                    commonProgressBar.Value = 0;
+                                    label10.Text = "0%";
+                                }));
 
-                                  prev = "0";
-                              }
-                          }
-                          else
-                          {
-                              d = Math.Round(100.0 * count / maxCount, 1).ToString();
-                              if (prev != d)
-                              {
-                                  commonProgressBar.Invoke(new Action(() =>
-                                  {
-                                      commonProgressBar.Value = count * 100 / maxCount;
-                                      label10.Text = d.Replace(",", ".") + "%";
-                                  }));
+                                prev = "0";
+                            }
+                        }
+                        else
+                        {
+                            d = Math.Round(100.0 * count / maxCount, 1).ToString();
+                            if (prev != d)
+                            {
+                                commonProgressBar.Invoke(new Action(() =>
+                                {
+                                    commonProgressBar.Value = count * 100 / maxCount;
+                                    label10.Text = d.Replace(",", ".") + "%";
+                                }));
 
-                                  prev = d;
-                              }
-                          }
-                          if (parsers.Count == 0)
-                          {
-                              break;
-                          }
-                      }
-                      if (maxCount == 0)
-                      {
-                          if (prev != "0")
-                          {
-                              commonProgressBar.Invoke(new Action(() =>
-                              {
-                                  commonProgressBar.Value = 0;
-                                  label10.Text = "0%";
-                              }));
+                                prev = d;
+                            }
+                        }
+                        if (parsers.Count == 0)
+                        {
+                            break;
+                        }
+                    }
+                    if (maxCount == 0)
+                    {
+                        if (prev != "0")
+                        {
+                            commonProgressBar.Invoke(new Action(() =>
+                            {
+                                commonProgressBar.Value = 0;
+                                label10.Text = "0%";
+                            }));
 
-                              prev = "0";
-                          }
-                      }
-                      else
-                      {
-                          d = Math.Round(100.0 * count / maxCount, 1).ToString();
-                          if (prev != d)
-                          {
-                              commonProgressBar.Invoke(new Action(() =>
-                              {
-                                  commonProgressBar.Value = count * 100 / maxCount;
-                                  label10.Text = d.Replace(",", ".") + "%";
-                              }));
+                            prev = "0";
+                        }
+                    }
+                    else
+                    {
+                        d = Math.Round(100.0 * count / maxCount, 1).ToString();
+                        if (prev != d)
+                        {
+                            commonProgressBar.Invoke(new Action(() =>
+                            {
+                                commonProgressBar.Value = count * 100 / maxCount;
+                                label10.Text = d.Replace(",", ".") + "%";
+                            }));
 
-                              prev = d;
-                          }
-                      }
-                      if (!commonStop)
-                      {
-                          this.Invoke(new Action(() =>
-                          {
+                            prev = d;
+                        }
+                    }
+                    if (!commonStop)
+                    {
+                        this.Invoke(new Action(() =>
+                        {
 
-                              if (package.Workbook.Worksheets.Count > 0)
-                              {
-                                  if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                                  {
-                                      if (!File.Exists(saveFileDialog1.FileName))
-                                      {
-                                          using (File.Create(saveFileDialog1.FileName))
-                                          { }
-                                      }
-                                      package.SaveAs(new FileInfo(saveFileDialog1.FileName));
-                                      saved = true;
-                                      try
-                                      {
-                                          Process.Start(saveFileDialog1.FileName);
-                                      }
-                                      catch
-                                      {
-                                          try
-                                          {
-                                              Process.Start("explorer.exe", new FileInfo(saveFileDialog1.FileName).DirectoryName);
-                                          }
-                                          catch
-                                          { }
-                                      }
-                                      MessageBox.Show("Данные успешно сохранены", "Парсинг окончен", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                  }
-                                  else
-                                  {
-                                      if (!Directory.Exists("outFiles"))
-                                          Directory.CreateDirectory("outFiles");
-                                      string path = Path.Combine("outFiles", "Marketplaces " + DateTime.Now.ToString("MM_dd_yyyy HH-mm-ss") + ".xlsx");
-                                      using (File.Create(path))
-                                      { }
-                                      package.SaveAs(new FileInfo(path));
-                                      saved = true;
-                                  }
-                              }
-                          }));
-                          this.Invoke(new Action(() =>
-                          {
-                              commonProgressBar.Value = 0;
-                              beruProgressBar.Value = 0;
-                              ozonProgressBar.Value = 0;
-                              WBProgressBar.Value = 0;
-                              commonProgressBar.Visible = true;
-                              beruProgressBar.Visible = true;
-                              ozonProgressBar.Visible = true;
-                              WBProgressBar.Visible = true;
-                              label7.Text = "0%";
-                              label8.Text = "0%";
-                              label9.Text = "0%";
-                              label10.Text = "0%";
-                              label7.Visible = true;
-                              label8.Visible = true;
-                              label9.Visible = true;
-                              label10.Visible = true;
-                              label10.Visible = true;
-                          }));
-                      }
-                  }
-                  catch
-                  {
-                      try
-                      {
-                          if (package.Workbook.Worksheets.Count > 0)
-                          {
-                              if (!Directory.Exists("outFiles"))
-                                  Directory.CreateDirectory("outFiles");
-                              string path = Path.Combine("outFiles", "Marketplaces " + DateTime.Now.ToString("MM_dd_yyyy HH-mm-ss") + ".xlsx");
-                              using (File.Create(path))
-                              { }
-                              package.SaveAs(new FileInfo(path));
-                              saved = true;
-                          }
-                      }
-                      catch { }
-                  }
-                  try
-                  {
-                      count = 0;
-                      maxCount = 0;
-                      searchButton.Invoke(new Action(() =>
-                      {
-                          searchButton.Text = "Поиск";
-                          searchButton.BackColor = Color.FromArgb(0, 192, 0);
-                      }));
-                  }
-                  catch { }
-              });
+                            if (package.Workbook.Worksheets.Count > 0)
+                            {
+                                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                                {
+                                    if (!File.Exists(saveFileDialog1.FileName))
+                                    {
+                                        using (File.Create(saveFileDialog1.FileName))
+                                        { }
+                                    }
+                                    package.SaveAs(new FileInfo(saveFileDialog1.FileName));
+                                    saved = true;
+                                    try
+                                    {
+                                        Process.Start(saveFileDialog1.FileName);
+                                    }
+                                    catch
+                                    {
+                                        try
+                                        {
+                                            Process.Start("explorer.exe", new FileInfo(saveFileDialog1.FileName).DirectoryName);
+                                        }
+                                        catch
+                                        { }
+                                    }
+                                    MessageBox.Show("Данные успешно сохранены", "Парсинг окончен", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    if (!Directory.Exists("outFiles"))
+                                        Directory.CreateDirectory("outFiles");
+                                    string path = Path.Combine("outFiles", "Marketplaces " + DateTime.Now.ToString("MM_dd_yyyy HH-mm-ss") + ".xlsx");
+                                    using (File.Create(path))
+                                    { }
+                                    package.SaveAs(new FileInfo(path));
+                                    saved = true;
+                                }
+                            }
+                        }));
+                        this.Invoke(new Action(() =>
+                        {
+                            commonProgressBar.Value = 0;
+                            beruProgressBar.Value = 0;
+                            ozonProgressBar.Value = 0;
+                            WBProgressBar.Value = 0;
+                            commonProgressBar.Visible = true;
+                            beruProgressBar.Visible = true;
+                            ozonProgressBar.Visible = true;
+                            WBProgressBar.Visible = true;
+                            label7.Text = "0%";
+                            label8.Text = "0%";
+                            label9.Text = "0%";
+                            label10.Text = "0%";
+                            label7.Visible = true;
+                            label8.Visible = true;
+                            label9.Visible = true;
+                            label10.Visible = true;
+                            label10.Visible = true;
+                        }));
+                    }
+                }
+                catch
+                {
+                    try
+                    {
+                        if (package.Workbook.Worksheets.Count > 0)
+                        {
+                            if (!Directory.Exists("outFiles"))
+                                Directory.CreateDirectory("outFiles");
+                            string path = Path.Combine("outFiles", "Marketplaces " + DateTime.Now.ToString("MM_dd_yyyy HH-mm-ss") + ".xlsx");
+                            using (File.Create(path))
+                            { }
+                            package.SaveAs(new FileInfo(path));
+                            saved = true;
+                        }
+                    }
+                    catch { }
+                }
+                try
+                {
+                    count = 0;
+                    maxCount = 0;
+                    searchButton.Invoke(new Action(() =>
+                    {
+                        searchButton.Text = "Поиск";
+                        searchButton.BackColor = Color.FromArgb(0, 192, 0);
+                    }));
+                }
+                catch { }
+            });
             thread.Start();
         }
 
@@ -1170,7 +1170,7 @@ namespace WildberriesParser
                             {
                                 maxCount = n;
                             }
-                            if(maxCount>9972)
+                            if (maxCount > 9972)
                             {
                                 maxCount = 9972;
                             }
@@ -1211,6 +1211,7 @@ namespace WildberriesParser
                             IWebElement brandElement;
                             int price;
                             HashSet<string> pages = new HashSet<string>();
+                            long height;
                             Stopwatch stopwatch = new Stopwatch();
                             try
                             {
@@ -1234,7 +1235,18 @@ namespace WildberriesParser
                                         driver.Manage().Window.Position = new Point(-20000, -20000);
                                         driver.Manage().Window.Minimize();
                                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                        height = 8100;
                                         Thread.Sleep(1000);
+                                        for (long i = 1; i <= height; i += 10)
+                                        {
+                                            try
+                                            {
+                                                ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollTo(0,{i})");
+                                                height = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight");
+
+                                            }
+                                            catch { }
+                                        }
                                         html = driver.PageSource.Replace("'", "\"");
                                         n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                         data = "f";
@@ -1257,7 +1269,7 @@ namespace WildberriesParser
                                         {
                                             items = driver.FindElementsByCssSelector($"a[class='{data}']");
                                         }
-                                        while (items.Count != 36 && items.Count +count != maxCount&&stopwatch.Elapsed.TotalSeconds<1);
+                                        while (items.Count != 36 && items.Count + count != maxCount && stopwatch.Elapsed.TotalSeconds < 1);
                                         stopwatch.Stop();
                                         urls.Clear();
                                         foreach (var item in items)
@@ -1397,7 +1409,7 @@ namespace WildberriesParser
 
                                                 while (!html.Contains("</div>"))
                                                 {
-                                                    html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ").Replace("&quot;","\"");
+                                                    html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ").Replace("&quot;", "\"");
                                                 }
                                                 Thread.Sleep(100);
                                                 worksheet.SetValue(count + 2, ozonFields["query"].Column, query);
@@ -1506,8 +1518,8 @@ namespace WildberriesParser
                                                     {
                                                         data = data.Substring(n);
                                                         data = data.Substring(data.IndexOf("<h1"));
-                                                        data = data.Substring(data.IndexOf(">")+1);
-                                                        data = data.Substring(0,data.IndexOf("</h1>"));
+                                                        data = data.Substring(data.IndexOf(">") + 1);
+                                                        data = data.Substring(0, data.IndexOf("</h1>"));
                                                         cell = worksheet.Cells[count + 2, ozonFields["name"].Column];
                                                         cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute) { Display = data };
                                                     }
