@@ -1212,6 +1212,7 @@ namespace WildberriesParser
                             int price;
                             HashSet<string> pages = new HashSet<string>();
                             Stopwatch stopwatch = new Stopwatch();
+                            long height;
                             try
                             {
                                 string data2;
@@ -1234,7 +1235,18 @@ namespace WildberriesParser
                                         driver.Manage().Window.Position = new Point(-20000, -20000);
                                         driver.Manage().Window.Minimize();
                                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                                        height = 8100;
                                         Thread.Sleep(1000);
+                                        for (long i = 1; i <= height; i += 7)
+                                        {
+                                            try
+                                            {
+                                                ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollTo(0,{i})");
+                                                height = (long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.scrollHeight");
+
+                                            }
+                                            catch { }
+                                        }
                                         html = driver.PageSource.Replace("'", "\"");
                                         n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                         data = "f";
@@ -1259,6 +1271,7 @@ namespace WildberriesParser
                                         }
                                         while (items.Count != 36 && items.Count + count != maxCount && stopwatch.Elapsed.TotalSeconds < 1);
                                         stopwatch.Stop();
+                                        file.WriteLine(items.Count);
                                         urls.Clear();
                                         foreach (var item in items)
                                         {
