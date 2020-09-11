@@ -37,14 +37,20 @@
             this.WBPictureBox = new System.Windows.Forms.PictureBox();
             this.ozonPictureBox = new System.Windows.Forms.PictureBox();
             this.beruPictureBox = new System.Windows.Forms.PictureBox();
-            this.WBCheckBox = new System.Windows.Forms.CheckBox();
-            this.ozonCheckBox = new System.Windows.Forms.CheckBox();
-            this.beruCheckBox = new System.Windows.Forms.CheckBox();
+            this.WBActiveCheckBox = new System.Windows.Forms.CheckBox();
+            this.ozonActiveCheckBox = new System.Windows.Forms.CheckBox();
+            this.beruActiveCheckBox = new System.Windows.Forms.CheckBox();
             this.WBComboBox = new System.Windows.Forms.ComboBox();
             this.ozonComboBox = new System.Windows.Forms.ComboBox();
             this.beruComboBox = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.panel10 = new System.Windows.Forms.Panel();
+            this.beruRemainsCheckBox = new System.Windows.Forms.CheckBox();
+            this.panel9 = new System.Windows.Forms.Panel();
+            this.ozonRemainsCheckBox = new System.Windows.Forms.CheckBox();
+            this.panel8 = new System.Windows.Forms.Panel();
+            this.WBRemainsCheckBox = new System.Windows.Forms.CheckBox();
             this.beruCountTextBox = new System.Windows.Forms.TextBox();
             this.ozonCountTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -67,11 +73,15 @@
             this.panel7 = new System.Windows.Forms.Panel();
             this.label10 = new System.Windows.Forms.Label();
             this.commonProgressBar = new System.Windows.Forms.ProgressBar();
+            this.label11 = new System.Windows.Forms.Label();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.WBPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ozonPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.beruPictureBox)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
+            this.panel10.SuspendLayout();
+            this.panel9.SuspendLayout();
+            this.panel8.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -111,7 +121,7 @@
             // 
             this.WBCountTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.WBCountTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.WBCountTextBox.Location = new System.Drawing.Point(158, 297);
+            this.WBCountTextBox.Location = new System.Drawing.Point(158, 247);
             this.WBCountTextBox.Name = "WBCountTextBox";
             this.WBCountTextBox.Size = new System.Drawing.Size(231, 32);
             this.WBCountTextBox.TabIndex = 5;
@@ -122,7 +132,7 @@
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(4, 297);
+            this.label1.Location = new System.Drawing.Point(4, 247);
             this.label1.Margin = new System.Windows.Forms.Padding(3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(147, 32);
@@ -137,7 +147,7 @@
             this.WBPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("WBPictureBox.Image")));
             this.WBPictureBox.Location = new System.Drawing.Point(158, 4);
             this.WBPictureBox.Name = "WBPictureBox";
-            this.WBPictureBox.Size = new System.Drawing.Size(231, 169);
+            this.WBPictureBox.Size = new System.Drawing.Size(231, 144);
             this.WBPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.WBPictureBox.TabIndex = 7;
             this.WBPictureBox.TabStop = false;
@@ -150,7 +160,7 @@
             this.ozonPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("ozonPictureBox.Image")));
             this.ozonPictureBox.Location = new System.Drawing.Point(396, 4);
             this.ozonPictureBox.Name = "ozonPictureBox";
-            this.ozonPictureBox.Size = new System.Drawing.Size(231, 169);
+            this.ozonPictureBox.Size = new System.Drawing.Size(231, 144);
             this.ozonPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ozonPictureBox.TabIndex = 8;
             this.ozonPictureBox.TabStop = false;
@@ -163,38 +173,38 @@
             this.beruPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("beruPictureBox.Image")));
             this.beruPictureBox.Location = new System.Drawing.Point(634, 4);
             this.beruPictureBox.Name = "beruPictureBox";
-            this.beruPictureBox.Size = new System.Drawing.Size(232, 169);
+            this.beruPictureBox.Size = new System.Drawing.Size(232, 144);
             this.beruPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.beruPictureBox.TabIndex = 9;
             this.beruPictureBox.TabStop = false;
             this.beruPictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.beruPictureBox_MouseClick);
             // 
-            // WBCheckBox
+            // WBActiveCheckBox
             // 
-            this.WBCheckBox.AutoSize = true;
-            this.WBCheckBox.Location = new System.Drawing.Point(3, 6);
-            this.WBCheckBox.Name = "WBCheckBox";
-            this.WBCheckBox.Size = new System.Drawing.Size(18, 17);
-            this.WBCheckBox.TabIndex = 13;
-            this.WBCheckBox.UseVisualStyleBackColor = true;
+            this.WBActiveCheckBox.AutoSize = true;
+            this.WBActiveCheckBox.Location = new System.Drawing.Point(3, 6);
+            this.WBActiveCheckBox.Name = "WBActiveCheckBox";
+            this.WBActiveCheckBox.Size = new System.Drawing.Size(18, 17);
+            this.WBActiveCheckBox.TabIndex = 13;
+            this.WBActiveCheckBox.UseVisualStyleBackColor = true;
             // 
-            // ozonCheckBox
+            // ozonActiveCheckBox
             // 
-            this.ozonCheckBox.AutoSize = true;
-            this.ozonCheckBox.Location = new System.Drawing.Point(3, 3);
-            this.ozonCheckBox.Name = "ozonCheckBox";
-            this.ozonCheckBox.Size = new System.Drawing.Size(18, 17);
-            this.ozonCheckBox.TabIndex = 14;
-            this.ozonCheckBox.UseVisualStyleBackColor = true;
+            this.ozonActiveCheckBox.AutoSize = true;
+            this.ozonActiveCheckBox.Location = new System.Drawing.Point(3, 3);
+            this.ozonActiveCheckBox.Name = "ozonActiveCheckBox";
+            this.ozonActiveCheckBox.Size = new System.Drawing.Size(18, 17);
+            this.ozonActiveCheckBox.TabIndex = 14;
+            this.ozonActiveCheckBox.UseVisualStyleBackColor = true;
             // 
-            // beruCheckBox
+            // beruActiveCheckBox
             // 
-            this.beruCheckBox.AutoSize = true;
-            this.beruCheckBox.Location = new System.Drawing.Point(15, 16);
-            this.beruCheckBox.Name = "beruCheckBox";
-            this.beruCheckBox.Size = new System.Drawing.Size(18, 17);
-            this.beruCheckBox.TabIndex = 15;
-            this.beruCheckBox.UseVisualStyleBackColor = true;
+            this.beruActiveCheckBox.AutoSize = true;
+            this.beruActiveCheckBox.Location = new System.Drawing.Point(15, 16);
+            this.beruActiveCheckBox.Name = "beruActiveCheckBox";
+            this.beruActiveCheckBox.Size = new System.Drawing.Size(18, 17);
+            this.beruActiveCheckBox.TabIndex = 15;
+            this.beruActiveCheckBox.UseVisualStyleBackColor = true;
             // 
             // WBComboBox
             // 
@@ -211,7 +221,7 @@
             "Цена 🠗",
             "Скидка",
             "Обновление"});
-            this.WBComboBox.Location = new System.Drawing.Point(158, 180);
+            this.WBComboBox.Location = new System.Drawing.Point(158, 155);
             this.WBComboBox.Name = "WBComboBox";
             this.WBComboBox.Size = new System.Drawing.Size(231, 34);
             this.WBComboBox.TabIndex = 16;
@@ -231,7 +241,7 @@
             "Цена 🠗",
             "Скидка",
             "Рейтинг"});
-            this.ozonComboBox.Location = new System.Drawing.Point(396, 180);
+            this.ozonComboBox.Location = new System.Drawing.Point(396, 155);
             this.ozonComboBox.Name = "ozonComboBox";
             this.ozonComboBox.Size = new System.Drawing.Size(231, 34);
             this.ozonComboBox.TabIndex = 17;
@@ -251,7 +261,7 @@
             "Оценка",
             "Отзывы",
             "Скидка"});
-            this.beruComboBox.Location = new System.Drawing.Point(634, 180);
+            this.beruComboBox.Location = new System.Drawing.Point(634, 155);
             this.beruComboBox.Name = "beruComboBox";
             this.beruComboBox.Size = new System.Drawing.Size(232, 34);
             this.beruComboBox.TabIndex = 18;
@@ -274,6 +284,9 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel1.Controls.Add(this.panel10, 3, 4);
+            this.tableLayoutPanel1.Controls.Add(this.panel9, 2, 4);
+            this.tableLayoutPanel1.Controls.Add(this.panel8, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.beruCountTextBox, 3, 3);
             this.tableLayoutPanel1.Controls.Add(this.WBComboBox, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.ozonComboBox, 2, 1);
@@ -282,9 +295,9 @@
             this.tableLayoutPanel1.Controls.Add(this.WBCountTextBox, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.beruComboBox, 3, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 6);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.beruPictureBox, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.WBPictureBox, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 0);
@@ -292,17 +305,19 @@
             this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.panel2, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.panel3, 3, 2);
-            this.tableLayoutPanel1.Controls.Add(this.panel4, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.panel5, 2, 4);
-            this.tableLayoutPanel1.Controls.Add(this.panel6, 3, 4);
-            this.tableLayoutPanel1.Controls.Add(this.panel7, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.panel4, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.panel5, 2, 5);
+            this.tableLayoutPanel1.Controls.Add(this.panel6, 3, 5);
+            this.tableLayoutPanel1.Controls.Add(this.panel7, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label11, 0, 4);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 57);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 6;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanel1.RowCount = 7;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(870, 425);
@@ -310,11 +325,81 @@
             this.tableLayoutPanel1.SizeChanged += new System.EventHandler(this.tableLayoutPanel1_SizeChanged);
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
+            // panel10
+            // 
+            this.panel10.AutoSize = true;
+            this.panel10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel10.Controls.Add(this.beruRemainsCheckBox);
+            this.panel10.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel10.Enabled = false;
+            this.panel10.Location = new System.Drawing.Point(634, 286);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(232, 44);
+            this.panel10.TabIndex = 29;
+            this.panel10.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
+            // 
+            // beruRemainsCheckBox
+            // 
+            this.beruRemainsCheckBox.AutoCheck = false;
+            this.beruRemainsCheckBox.AutoSize = true;
+            this.beruRemainsCheckBox.Location = new System.Drawing.Point(3, 3);
+            this.beruRemainsCheckBox.Name = "beruRemainsCheckBox";
+            this.beruRemainsCheckBox.Size = new System.Drawing.Size(18, 17);
+            this.beruRemainsCheckBox.TabIndex = 14;
+            this.beruRemainsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // panel9
+            // 
+            this.panel9.AutoSize = true;
+            this.panel9.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel9.Controls.Add(this.ozonRemainsCheckBox);
+            this.panel9.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel9.Enabled = false;
+            this.panel9.Location = new System.Drawing.Point(396, 286);
+            this.panel9.Name = "panel9";
+            this.panel9.Size = new System.Drawing.Size(231, 44);
+            this.panel9.TabIndex = 28;
+            this.panel9.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
+            // 
+            // ozonRemainsCheckBox
+            // 
+            this.ozonRemainsCheckBox.AutoCheck = false;
+            this.ozonRemainsCheckBox.AutoSize = true;
+            this.ozonRemainsCheckBox.Location = new System.Drawing.Point(3, 3);
+            this.ozonRemainsCheckBox.Name = "ozonRemainsCheckBox";
+            this.ozonRemainsCheckBox.Size = new System.Drawing.Size(18, 17);
+            this.ozonRemainsCheckBox.TabIndex = 14;
+            this.ozonRemainsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // panel8
+            // 
+            this.panel8.AutoSize = true;
+            this.panel8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel8.Controls.Add(this.WBRemainsCheckBox);
+            this.panel8.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.panel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel8.Location = new System.Drawing.Point(158, 286);
+            this.panel8.Name = "panel8";
+            this.panel8.Size = new System.Drawing.Size(231, 44);
+            this.panel8.TabIndex = 27;
+            this.panel8.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
+            // 
+            // WBRemainsCheckBox
+            // 
+            this.WBRemainsCheckBox.AutoSize = true;
+            this.WBRemainsCheckBox.Location = new System.Drawing.Point(3, 6);
+            this.WBRemainsCheckBox.Name = "WBRemainsCheckBox";
+            this.WBRemainsCheckBox.Size = new System.Drawing.Size(18, 17);
+            this.WBRemainsCheckBox.TabIndex = 13;
+            this.WBRemainsCheckBox.UseVisualStyleBackColor = true;
+            // 
             // beruCountTextBox
             // 
             this.beruCountTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.beruCountTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.beruCountTextBox.Location = new System.Drawing.Point(634, 297);
+            this.beruCountTextBox.Location = new System.Drawing.Point(634, 247);
             this.beruCountTextBox.Name = "beruCountTextBox";
             this.beruCountTextBox.Size = new System.Drawing.Size(232, 32);
             this.beruCountTextBox.TabIndex = 25;
@@ -324,7 +409,7 @@
             // 
             this.ozonCountTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ozonCountTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ozonCountTextBox.Location = new System.Drawing.Point(396, 297);
+            this.ozonCountTextBox.Location = new System.Drawing.Point(396, 247);
             this.ozonCountTextBox.Name = "ozonCountTextBox";
             this.ozonCountTextBox.Size = new System.Drawing.Size(231, 32);
             this.ozonCountTextBox.TabIndex = 24;
@@ -335,10 +420,10 @@
             this.label6.AutoSize = true;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(4, 380);
+            this.label6.Location = new System.Drawing.Point(4, 382);
             this.label6.Margin = new System.Windows.Forms.Padding(3);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(147, 41);
+            this.label6.Size = new System.Drawing.Size(147, 39);
             this.label6.TabIndex = 23;
             this.label6.Text = "Общий";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -348,10 +433,10 @@
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(4, 221);
+            this.label4.Location = new System.Drawing.Point(4, 196);
             this.label4.Margin = new System.Windows.Forms.Padding(3);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(147, 69);
+            this.label4.Size = new System.Drawing.Size(147, 44);
             this.label4.TabIndex = 21;
             this.label4.Text = "Активен";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -361,10 +446,10 @@
             this.label5.AutoSize = true;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(4, 336);
+            this.label5.Location = new System.Drawing.Point(4, 337);
             this.label5.Margin = new System.Windows.Forms.Padding(3);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(147, 37);
+            this.label5.Size = new System.Drawing.Size(147, 38);
             this.label5.TabIndex = 22;
             this.label5.Text = "Прогресс";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -377,7 +462,7 @@
             this.label2.Location = new System.Drawing.Point(4, 4);
             this.label2.Margin = new System.Windows.Forms.Padding(3);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(147, 169);
+            this.label2.Size = new System.Drawing.Size(147, 144);
             this.label2.TabIndex = 19;
             this.label2.Text = "Маркетплейс";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -387,7 +472,7 @@
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(4, 180);
+            this.label3.Location = new System.Drawing.Point(4, 155);
             this.label3.Margin = new System.Windows.Forms.Padding(3);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(147, 34);
@@ -399,12 +484,12 @@
             // 
             this.panel1.AutoSize = true;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.WBCheckBox);
+            this.panel1.Controls.Add(this.WBActiveCheckBox);
             this.panel1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(158, 221);
+            this.panel1.Location = new System.Drawing.Point(158, 196);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(231, 69);
+            this.panel1.Size = new System.Drawing.Size(231, 44);
             this.panel1.TabIndex = 26;
             this.panel1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
             // 
@@ -412,12 +497,12 @@
             // 
             this.panel2.AutoSize = true;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.ozonCheckBox);
+            this.panel2.Controls.Add(this.ozonActiveCheckBox);
             this.panel2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(396, 221);
+            this.panel2.Location = new System.Drawing.Point(396, 196);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(231, 69);
+            this.panel2.Size = new System.Drawing.Size(231, 44);
             this.panel2.TabIndex = 27;
             this.panel2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
             // 
@@ -425,12 +510,12 @@
             // 
             this.panel3.AutoSize = true;
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel3.Controls.Add(this.beruCheckBox);
+            this.panel3.Controls.Add(this.beruActiveCheckBox);
             this.panel3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(634, 221);
+            this.panel3.Location = new System.Drawing.Point(634, 196);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(232, 69);
+            this.panel3.Size = new System.Drawing.Size(232, 44);
             this.panel3.TabIndex = 28;
             this.panel3.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseClick);
             // 
@@ -439,9 +524,9 @@
             this.panel4.Controls.Add(this.label7);
             this.panel4.Controls.Add(this.WBProgressBar);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel4.Location = new System.Drawing.Point(158, 336);
+            this.panel4.Location = new System.Drawing.Point(158, 337);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(231, 37);
+            this.panel4.Size = new System.Drawing.Size(231, 38);
             this.panel4.TabIndex = 29;
             this.panel4.SizeChanged += new System.EventHandler(this.panel4_SizeChanged);
             // 
@@ -471,9 +556,9 @@
             this.panel5.Controls.Add(this.label8);
             this.panel5.Controls.Add(this.ozonProgressBar);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(396, 336);
+            this.panel5.Location = new System.Drawing.Point(396, 337);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(231, 37);
+            this.panel5.Size = new System.Drawing.Size(231, 38);
             this.panel5.TabIndex = 30;
             this.panel5.SizeChanged += new System.EventHandler(this.panel5_SizeChanged);
             // 
@@ -503,9 +588,9 @@
             this.panel6.Controls.Add(this.label9);
             this.panel6.Controls.Add(this.beruProgressBar);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel6.Location = new System.Drawing.Point(634, 336);
+            this.panel6.Location = new System.Drawing.Point(634, 337);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(232, 37);
+            this.panel6.Size = new System.Drawing.Size(232, 38);
             this.panel6.TabIndex = 31;
             this.panel6.SizeChanged += new System.EventHandler(this.panel6_SizeChanged);
             // 
@@ -536,9 +621,9 @@
             this.panel7.Controls.Add(this.label10);
             this.panel7.Controls.Add(this.commonProgressBar);
             this.panel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel7.Location = new System.Drawing.Point(158, 380);
+            this.panel7.Location = new System.Drawing.Point(158, 382);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(708, 41);
+            this.panel7.Size = new System.Drawing.Size(708, 39);
             this.panel7.TabIndex = 32;
             this.panel7.SizeChanged += new System.EventHandler(this.panel7_SizeChanged);
             // 
@@ -562,6 +647,19 @@
             this.commonProgressBar.Size = new System.Drawing.Size(403, 24);
             this.commonProgressBar.Step = 1;
             this.commonProgressBar.TabIndex = 12;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(4, 286);
+            this.label11.Margin = new System.Windows.Forms.Padding(3);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(147, 44);
+            this.label11.TabIndex = 33;
+            this.label11.Text = "Остатки";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // saveFileDialog1
             // 
@@ -589,6 +687,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.beruPictureBox)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.panel10.ResumeLayout(false);
+            this.panel10.PerformLayout();
+            this.panel9.ResumeLayout(false);
+            this.panel9.PerformLayout();
+            this.panel8.ResumeLayout(false);
+            this.panel8.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -621,9 +725,9 @@
         private System.Windows.Forms.ProgressBar ozonProgressBar;
         private System.Windows.Forms.ProgressBar beruProgressBar;
         private System.Windows.Forms.ProgressBar commonProgressBar;
-        private System.Windows.Forms.CheckBox WBCheckBox;
-        private System.Windows.Forms.CheckBox ozonCheckBox;
-        private System.Windows.Forms.CheckBox beruCheckBox;
+        private System.Windows.Forms.CheckBox WBActiveCheckBox;
+        private System.Windows.Forms.CheckBox ozonActiveCheckBox;
+        private System.Windows.Forms.CheckBox beruActiveCheckBox;
         private System.Windows.Forms.ComboBox WBComboBox;
         private System.Windows.Forms.ComboBox ozonComboBox;
         private System.Windows.Forms.ComboBox beruComboBox;
@@ -648,6 +752,13 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Panel panel10;
+        private System.Windows.Forms.CheckBox beruRemainsCheckBox;
+        private System.Windows.Forms.Panel panel9;
+        private System.Windows.Forms.CheckBox ozonRemainsCheckBox;
+        private System.Windows.Forms.Panel panel8;
+        private System.Windows.Forms.CheckBox WBRemainsCheckBox;
+        private System.Windows.Forms.Label label11;
     }
 }
 
