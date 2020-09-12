@@ -627,42 +627,58 @@ namespace WildberriesParser
             {
                 while (true)
                 {
-                    try
-                    {
-                        driver.Navigate().GoToUrl(url);
-                        break;
-                    }
-                    catch
+                    while (true)
                     {
                         try
                         {
-                            driver?.Close();
-                            driver?.Quit();
+                            driver.Navigate().GoToUrl(url);
+                            break;
+                        }
+                        catch
+                        {
+                            try
+                            {
+                                driver?.Close();
+                                driver?.Quit();
+                            }
+                            catch { }
+                            driver = CreateDriver();
+                            driver.Manage().Window.Minimize();
+                            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
+                        }
+                    }
+                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    if (!driver.FindElementByTagName("html").GetAttribute("innerHTML").ToLower().Contains("добавить в корзину"))
+                        return "0";
+                    driver.FindElementByCssSelector("div[class='cart-btn-wrap']").Click();
+                    Thread.Sleep(200);
+                    if (!driver.PageSource.Replace("'", "\"").Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
+                    {
+                        try
+                        {
+                            var elem = driver.FindElementByCssSelector("button[class='c-btn-main j-confirm']");
+                            if (elem.Displayed)
+                            {
+                                elem.Click();
+                                Thread.Sleep(500);
+                                driver.FindElementByCssSelector("div[class='cart-btn-wrap']").Click();
+                                Thread.Sleep(200);
+                            }
                         }
                         catch { }
-                        driver = CreateDriver();
-                        driver.Manage().Window.Minimize();
                     }
-                }
-                wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                driver.FindElementByCssSelector("div[class='cart-btn-wrap']").Click();
-                Thread.Sleep(200);
-                var h = driver.PageSource;
-                if (!driver.PageSource.Replace("'", "\"").Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
-                {
-                    var elem = driver.FindElementByCssSelector("button[class='c-btn-main j-confirm']");
-                    if (elem.Displayed)
+                    Thread.Sleep(300);
+                    try
                     {
-                        elem.Click();
-                        Thread.Sleep(500);
-                        driver.FindElementByCssSelector("div[class='cart-btn-wrap']").Click();
-                        Thread.Sleep(200);
+                        driver.Navigate().GoToUrl("https://lk.wildberries.ru/basket");
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                        if (!driver.PageSource.Replace("'", "\"").Contains("class=\"i-empty-basket\""))
+                            break;
+                    }
+                    catch
+                    {
                     }
                 }
-
-                driver.Navigate().GoToUrl("https://lk.wildberries.ru/basket");
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
-                wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                 try
                 {
                     var btnElement = driver.FindElementByClassName("plus");
@@ -687,8 +703,16 @@ namespace WildberriesParser
                     return driver.FindElementByCssSelector("input[class='in_tb numeric ignore valid']").GetProperty("value");
                 }
             }
-            catch
-            { }
+            catch(Exception ex)
+            {
+                string ozonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON");
+                if (!Directory.Exists(ozonPath))
+                    Directory.CreateDirectory(ozonPath);
+                using(var file = new StreamWriter(new FileStream(Path.Combine(ozonPath, "log.txt"),FileMode.OpenOrCreate)))
+                {
+                    file.WriteLine(ex.Message+"\n" + driver.PageSource);
+                }
+            }
             finally
             {
                 try
@@ -1182,12 +1206,7 @@ namespace WildberriesParser
         {
             return new Thread(() =>
             {
-                string ozonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON");
-                if (!Directory.Exists(ozonPath))
-                    Directory.CreateDirectory(ozonPath);
                 ChromeDriver driver = CreateDriver();
-                using (var file = File.CreateText(Path.Combine(ozonPath, "log.txt")))
-                {
                     try
                     {
                         string text = "";
@@ -1200,13 +1219,8 @@ namespace WildberriesParser
                                 driver.Navigate().GoToUrl($"https://www.ozon.ru/search/?from_global=true&text={GetFormattedString(query)}");
                                 break;
                             }
-                            catch (Exception ex)
+                            catch
                             {
-                                try
-                                {
-                                    file.WriteLine(CreateExceptionString(ex) + "-1");
-                                }
-                                catch { }
                                 try
                                 {
                                     driver?.Close();
@@ -1235,13 +1249,8 @@ namespace WildberriesParser
                                 driver.Navigate().GoToUrl(request);
                                 break;
                             }
-                            catch (Exception ex)
+                            catch 
                             {
-                                try
-                                {
-                                    file.WriteLine(CreateExceptionString(ex) + "-2");
-                                }
-                                catch { }
                                 try
                                 {
                                     driver?.Close();
@@ -1376,13 +1385,8 @@ namespace WildberriesParser
                                         {
                                             items = driver.FindElementsByCssSelector($"a[class='{data}']");
                                         }
-                                        while (items.Count < 36 && items.Count + count != maxCount);
+                                        while (items.Count < 36 && items.Count + count < maxCount);
                                         stopwatch.Stop();
-                                        if (a == 2)
-                                        {
-                                            file.WriteLine(driver.PageSource);
-                                        }
-                                        a++;
                                         urls.Clear();
                                         foreach (var item in items)
                                         {
@@ -1437,7 +1441,7 @@ namespace WildberriesParser
                                                     {
                                                         items2 = driver.FindElementsByCssSelector($"a[class='{data}']");
                                                     }
-                                                    while (items2.Count < 36 && items2.Count + count != maxCount);
+                                                    while (items2.Count < 36 && items2.Count + count < maxCount);
                                                     stopwatch.Stop();
                                                     foreach (var item2 in items2)
                                                     {
@@ -1482,13 +1486,8 @@ namespace WildberriesParser
                                                         driver.Navigate().GoToUrl(url);
                                                         break;
                                                     }
-                                                    catch (Exception ex)
+                                                    catch
                                                     {
-                                                        try
-                                                        {
-                                                            file.WriteLine(CreateExceptionString(ex) + count);
-                                                        }
-                                                        catch { }
                                                         try
                                                         {
                                                             driver?.Close();
@@ -1872,13 +1871,8 @@ namespace WildberriesParser
                                     { }
                                 }
                             }
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
-                                try
-                                {
-                                    file.WriteLine(CreateExceptionString(ex));
-                                }
-                                catch { }
                                 try
                                 {
                                     this.Invoke(new Action(() =>
@@ -1886,13 +1880,8 @@ namespace WildberriesParser
                                         MessageBox.Show(ex.Message, "Непредвиденная ошибка (OZON)", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }));
                                 }
-                                catch (Exception ex2)
+                                catch
                                 {
-                                    try
-                                    {
-                                        file.WriteLine(CreateExceptionString(ex2));
-                                    }
-                                    catch { }
                                 }
                             }
                             worksheet.Cells[1, 1, count + 1, ozonFields.Count].AutoFitColumns();
@@ -1905,15 +1894,10 @@ namespace WildberriesParser
                             }));
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        try
-                        {
-                            file.WriteLine(CreateExceptionString(ex));
-                        }
-                        catch { }
                     }
-                }
+                
                 try
                 {
                     driver?.Close();
