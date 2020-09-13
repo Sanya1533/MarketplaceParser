@@ -826,6 +826,7 @@ namespace WildberriesParser
                         this.Invoke(new Action(() =>
                         {
                             WBCountTextBox.Text = maxCount.ToString();
+                            WBCountTextBox.Tag = true;
                         }));
                         lock (lockObj)
                         {
@@ -1204,6 +1205,7 @@ namespace WildberriesParser
                 this.Invoke(new Action(() =>
                 {
                     WBCountTextBox.Text = int.TryParse(prevCount, out int a) ? prevCount : "Все";
+                    WBCountTextBox.Tag = int.TryParse(prevCount, out a);
                 }));
                 parsers.Remove(Thread.CurrentThread);
             });
@@ -1311,6 +1313,7 @@ namespace WildberriesParser
                             this.Invoke(new Action(() =>
                             {
                                 ozonCountTextBox.Text = maxCount.ToString();
+                                ozonCountTextBox.Tag = true;
                             }));
                             lock (lockObj)
                             {
@@ -1915,6 +1918,7 @@ namespace WildberriesParser
                 this.Invoke(new Action(() =>
                 {
                     ozonCountTextBox.Text = int.TryParse(prevCount, out int a) ? prevCount : "Все";
+                    ozonCountTextBox.Tag = int.TryParse(prevCount, out a);
                 }));
                 parsers.Remove(Thread.CurrentThread);
             });
@@ -2044,6 +2048,7 @@ namespace WildberriesParser
                         this.Invoke(new Action(() =>
                         {
                             beruCountTextBox.Text = maxCount.ToString();
+                            beruCountTextBox.Tag = true;
                         }));
                         int count = 0;
                         this.Invoke(new Action(() =>
@@ -2593,6 +2598,7 @@ namespace WildberriesParser
                 this.Invoke(new Action(() =>
                 {
                     beruCountTextBox.Text = int.TryParse(prevCount, out int a) ? prevCount : "Все";
+                    beruCountTextBox.Tag = int.TryParse(prevCount, out a);
                 }));
                 parsers.Remove(Thread.CurrentThread);
             });
