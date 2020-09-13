@@ -625,8 +625,10 @@ namespace WildberriesParser
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
             try
             {
-                while (true)
+                int n = 0;
+                while (n<3)
                 {
+                    n++;
                     while (true)
                     {
                         try
@@ -650,7 +652,7 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     if (!driver.FindElementByTagName("html").GetAttribute("innerHTML").ToLower().Contains("добавить в корзину"))
                         return "0";
-                    driver.FindElementByCssSelector("div[class='cart-btn-wrap']").Click();
+                    driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1 j-add-to-card']")).Click();
                     Thread.Sleep(200);
                     if (!driver.PageSource.Replace("'", "\"").Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
                     {
@@ -731,6 +733,7 @@ namespace WildberriesParser
             {
                 ChromeDriver driver = CreateDriver();
                 driver.Manage().Window.Minimize();
+                string prevCount = WBCountTextBox.Text;
                 try
                 {
                     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
@@ -1198,6 +1201,10 @@ namespace WildberriesParser
                     driver?.Quit();
                 }
                 catch { }
+                this.Invoke(new Action(() =>
+                {
+                    WBCountTextBox.Text = int.TryParse(prevCount, out int a) ? prevCount : "Все";
+                }));
                 parsers.Remove(Thread.CurrentThread);
             });
         }
@@ -1207,6 +1214,7 @@ namespace WildberriesParser
             return new Thread(() =>
             {
                 ChromeDriver driver = CreateDriver();
+                string prevCount = ozonCountTextBox.Text;
                     try
                     {
                         string text = "";
@@ -1904,6 +1912,10 @@ namespace WildberriesParser
                     driver?.Quit();
                 }
                 catch { }
+                this.Invoke(new Action(() =>
+                {
+                    ozonCountTextBox.Text = int.TryParse(prevCount, out int a) ? prevCount : "Все";
+                }));
                 parsers.Remove(Thread.CurrentThread);
             });
         }
@@ -1919,6 +1931,7 @@ namespace WildberriesParser
             {
                 ChromeDriver driver = CreateDriver();
                 driver.Manage().Window.Minimize();
+                string prevCount = beruCountTextBox.Text;
                 try
                 {
                     string text = "";
@@ -2577,6 +2590,10 @@ namespace WildberriesParser
                     driver?.Quit();
                 }
                 catch { }
+                this.Invoke(new Action(() =>
+                {
+                    beruCountTextBox.Text = int.TryParse(prevCount, out int a) ? prevCount : "Все";
+                }));
                 parsers.Remove(Thread.CurrentThread);
             });
         }
