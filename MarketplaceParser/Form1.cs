@@ -652,13 +652,14 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     if (!driver.FindElementByTagName("html").GetAttribute("innerHTML").ToLower().Contains("добавить в корзину"))
                         return "0";
-                    driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1 j-add-to-card']")).Click();
+                    var elem = driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1 j-add-to-card']"));
+                    ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", elem);
                     Thread.Sleep(200);
                     if (!driver.PageSource.Replace("'", "\"").Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
                     {
                         try
                         {
-                            var elem = driver.FindElementByCssSelector("button[class='c-btn-main j-confirm']");
+                            elem = driver.FindElementByCssSelector("button[class='c-btn-main j-confirm']");
                             if (elem.Displayed)
                             {
                                 elem.Click();
