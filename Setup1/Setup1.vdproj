@@ -15,8 +15,20 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_1A53513440A7E60C21279BC09D6F0183"
+        "MsmKey" = "8:_0320D366697DA4DB51056FAD72D80605"
         "OwnerKey" = "8:_4224B6CE9137448C8E0E1C4EB1917E7C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2C3908B5C586B9BB18FD2F271A054645"
+        "OwnerKey" = "8:_4224B6CE9137448C8E0E1C4EB1917E7C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3B8BBCABBBEA4C4686F29C572AADA525"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -33,20 +45,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6FE4E9BE4E3D363A71375079683EA17D"
-        "OwnerKey" = "8:_4224B6CE9137448C8E0E1C4EB1917E7C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_9AF06B8B11C08245527FD0048E2BED4F"
         "OwnerKey" = "8:_4224B6CE9137448C8E0E1C4EB1917E7C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_D23789AC30684A129217434F3EABEE5F"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_BA303132EE4006272E6F1CCF2F54A90D"
+        "OwnerKey" = "8:_4224B6CE9137448C8E0E1C4EB1917E7C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -58,13 +64,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6FE4E9BE4E3D363A71375079683EA17D"
+        "OwnerKey" = "8:_BA303132EE4006272E6F1CCF2F54A90D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1A53513440A7E60C21279BC09D6F0183"
+        "OwnerKey" = "8:_2C3908B5C586B9BB18FD2F271A054645"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0320D366697DA4DB51056FAD72D80605"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -174,14 +186,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1A53513440A7E60C21279BC09D6F0183"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0320D366697DA4DB51056FAD72D80605"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:EPPlus, Version=5.3.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:EPPlus, Version=5.3.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_1A53513440A7E60C21279BC09D6F0183"
+                    "_0320D366697DA4DB51056FAD72D80605"
                     {
                     "Name" = "8:EPPlus.dll"
                     "Attributes" = "3:512"
@@ -205,20 +217,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4C5CE60392BCBD51AF7FE36443951250"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2C3908B5C586B9BB18FD2F271A054645"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Threading.Tasks, Version=4.0.11.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+            "AssemblyAsmDisplayName" = "8:WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_4C5CE60392BCBD51AF7FE36443951250"
+                    "_2C3908B5C586B9BB18FD2F271A054645"
                     {
-                    "Name" = "8:System.Threading.Tasks.dll"
+                    "Name" = "8:WebDriver.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Threading.Tasks.dll"
+            "SourcePath" = "8:WebDriver.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3500D1CF8B0142C0B003596978EF19EE"
@@ -236,20 +248,40 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_6FE4E9BE4E3D363A71375079683EA17D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3B8BBCABBBEA4C4686F29C572AADA525"
+            {
+            "SourcePath" = "8:..\\MarketplaceParser\\berries.ico"
+            "TargetName" = "8:berries.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_3500D1CF8B0142C0B003596978EF19EE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4C5CE60392BCBD51AF7FE36443951250"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Threading.Tasks, Version=4.0.11.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_6FE4E9BE4E3D363A71375079683EA17D"
+                    "_4C5CE60392BCBD51AF7FE36443951250"
                     {
-                    "Name" = "8:WebDriver.dll"
+                    "Name" = "8:System.Threading.Tasks.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:WebDriver.dll"
+            "SourcePath" = "8:System.Threading.Tasks.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3500D1CF8B0142C0B003596978EF19EE"
@@ -298,10 +330,21 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D23789AC30684A129217434F3EABEE5F"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BA303132EE4006272E6F1CCF2F54A90D"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\Downloads\\berries.ico"
-            "TargetName" = "8:berries.ico"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_BA303132EE4006272E6F1CCF2F54A90D"
+                    {
+                    "Name" = "8:System.ComponentModel.Annotations.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.ComponentModel.Annotations.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3500D1CF8B0142C0B003596978EF19EE"
             "Condition" = "8:"
@@ -315,7 +358,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
         }
@@ -506,7 +549,7 @@
             "Target" = "8:_4224B6CE9137448C8E0E1C4EB1917E7C"
             "Folder" = "8:_8D89F0595E274C41A539BBD20C290772"
             "WorkingFolder" = "8:_3500D1CF8B0142C0B003596978EF19EE"
-            "Icon" = "8:_D23789AC30684A129217434F3EABEE5F"
+            "Icon" = "8:_3B8BBCABBBEA4C4686F29C572AADA525"
             "Feature" = "8:"
             }
         }
@@ -938,7 +981,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4224B6CE9137448C8E0E1C4EB1917E7C"
             {
-            "SourcePath" = "8:..\\WildberriesParser\\obj\\Debug\\Marketplace Parser.exe"
+            "SourcePath" = "8:..\\MarketplaceParser\\obj\\Debug\\Marketplace Parser.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_3500D1CF8B0142C0B003596978EF19EE"

@@ -14,6 +14,7 @@ using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Keys = OpenQA.Selenium.Keys;
 
 namespace WildberriesParser
 {
@@ -655,6 +656,8 @@ namespace WildberriesParser
                     var elem = driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1 j-add-to-card']"));
                     ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", elem);
                     Thread.Sleep(200);
+                    elem.Click();
+                    Thread.Sleep(200);
                     if (!driver.PageSource.Replace("'", "\"").Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
                     {
                         try
@@ -684,15 +687,15 @@ namespace WildberriesParser
                 }
                 try
                 {
-                    var btnElement = driver.FindElementByClassName("plus");
                     var brandElement = driver.FindElementByCssSelector("input[class='in_tb numeric ignore']");
-                    while (true)
+                    for(int i=1;i<100;i++)
                     {
-                        btnElement.Click();
-                        if (!driver.PageSource.Contains("class=\"info-msg text-base-magenta hide\""))
+                        brandElement.SendKeys(Keys.Backspace+Keys.Backspace+Keys.Delete+Keys.Delete + i.ToString());
+                        if(driver.PageSource.Replace("'","\"").Contains("class=\"btn-orange btn-do-order j-btn-step disabled\""))
+                        {
+                            brandElement.SendKeys(Keys.Backspace + Keys.Backspace + Keys.Delete + Keys.Delete + (i-1).ToString());
                             break;
-                        if (int.Parse(brandElement.GetProperty("value")) >= 255)
-                            break;
+                        }
                     }
                 }
                 catch
