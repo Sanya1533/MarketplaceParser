@@ -119,7 +119,7 @@ namespace WildberriesParser
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.HideCommandPromptWindow = true;
             ChromeOptions options = new ChromeOptions();
-            //options.AddArgument("--window-position=-20000,-20000");
+            options.AddArgument("--window-position=-20000,-20000");
             options.AddArgument("--no-sandbox");
             options.AddArgument("no-sandbox");
 
@@ -167,8 +167,8 @@ namespace WildberriesParser
 
         private void SetBeruDictonaries()
         {
-            string[] texts = new[] { "Наименование запроса", "Товар", "Бренд", "Цена до скидки", "Цена после скидок", "Вес без упаковки, гр.", "Цена 100гр.", "Отзывы", "Артикул", "Продажи", "Интерес" };
-            string[] names = new[] { "query", "name", "brand", "pricebefore", "priceafter", "weight", "price", "comments", "article", "sales", "interest" };
+            string[] texts = new[] { "Наименование запроса", "Товар", "Бренд", "Цена до скидки", "Цена после скидок", "Вес без упаковки, гр.", "Цена 100гр.", "Отзывы", "Артикул", "Продажи"};
+            string[] names = new[] { "query", "name", "brand", "pricebefore", "priceafter", "weight", "price", "comments", "article", "sales"};
             for (int i = 0; i < texts.Length; i++)
             {
                 beruFields.Add(names[i], new FieldInfo(i + 1, texts[i]));
@@ -668,7 +668,7 @@ namespace WildberriesParser
                     Thread.Sleep(200);
                     elem.Click();
                     Thread.Sleep(500);
-                    if (!driver.PageSource.Replace("'", "\"").Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
+                    if (!driver.PageSource.Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
                     {
                         try
                         {
@@ -814,7 +814,7 @@ namespace WildberriesParser
                     }
                     int page = 1;
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                    string html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", "").Replace("&thinsp;", "");
+                    string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "");
                     int n = html.IndexOf("<span class=\"goods-count j-goods-count\">");
                     if (n >= 0)
                     {
@@ -912,7 +912,6 @@ namespace WildberriesParser
                                     {
                                         nextUrl = null;
                                     }
-                                    urls = new List<string>() { "https://www.wildberries.ru/catalog/14257976/detail.aspx?targetUrl=XS" };
                                     foreach (var url in urls)
                                     {
                                         if (stop)
@@ -944,7 +943,7 @@ namespace WildberriesParser
                                             html = "";
                                             while (!html.Contains("</div>"))
                                             {
-                                                html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ");
+                                                html = driver.PageSource.Replace("&nbsp;", " ").Replace("&thinsp;", " ");
                                             }
                                             worksheet.SetValue(count + 2, WBFields["query"].Column, query);
                                             if (html.Contains("<a id=\"brandBannerImgRef\""))
@@ -1296,7 +1295,7 @@ namespace WildberriesParser
                     }
                     driver.Manage().Window.Position = new Point(-20000, -20000);
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                    string html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
+                    string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
                     int n = html.IndexOf("data-widget=\"fulltextResultsHeader\"");
 
                     if (n >= 0)
@@ -1385,7 +1384,7 @@ namespace WildberriesParser
                                     }
                                     driver.Manage().Window.Position = new Point(-20000, -20000);
                                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));                                    Thread.Sleep(1000);
-                                    html = driver.PageSource.Replace("'", "\"");
+                                    html = driver.PageSource;
                                     n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                     data = "f";
                                     if (!pages.Add(driver.Url))
@@ -1424,7 +1423,7 @@ namespace WildberriesParser
                                                 item.Click();
                                                 while (true)
                                                 {
-                                                    html = driver.PageSource.Replace("'", "\"");
+                                                    html = driver.PageSource;
                                                     if (html.LastIndexOf("</script>") < html.LastIndexOf("<div"))
                                                         break;
                                                 }
@@ -1445,7 +1444,7 @@ namespace WildberriesParser
                                                 }
                                                 brandElement.FindElement(By.CssSelector($"div[class='{html}']")).Click();
                                                 wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                                html = driver.PageSource.Replace("'", "\"");
+                                                html = driver.PageSource;
                                                 n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                                 if (n >= 0)
                                                 {
@@ -1540,7 +1539,7 @@ namespace WildberriesParser
 
                                             while (!html.Contains("</div>"))
                                             {
-                                                html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ").Replace("&quot;", "\"");
+                                                html = driver.PageSource.Replace("&nbsp;", " ").Replace("&thinsp;", " ").Replace("&quot;", "\"");
                                             }
                                             Thread.Sleep(100);
                                             worksheet.SetValue(count + 2, ozonFields["query"].Column, query);
@@ -1861,7 +1860,7 @@ namespace WildberriesParser
                                         }
                                     }
                                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
-                                    html = driver.PageSource.Replace("'", "\"");
+                                    html = driver.PageSource;
                                     n = html.IndexOf("Перейти на страницу");
                                     if (n >= 0)
                                     {
@@ -2014,7 +2013,7 @@ namespace WildberriesParser
                     {
                         SolveCaptcha(driver, "https://beru.ru/showcaptcha");
                     }
-                    string html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
+                    string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
                     int n = html.IndexOf("data-zone-name=\"AdultAlert\"");
                     if (n >= 0)
                     {
@@ -2114,7 +2113,7 @@ namespace WildberriesParser
                                     {
                                         SolveCaptcha(driver, "https://beru.ru/showcaptcha");
                                     }
-                                    html = driver.PageSource.Replace("'", "\"");
+                                    html = driver.PageSource;
                                     n = html.IndexOf("data-auto=\"SerpPage\"");
                                     data = "f";
                                     if (n >= 0)
@@ -2132,7 +2131,7 @@ namespace WildberriesParser
                                     }
                                     nextUrl = null;
 
-                                    data = driver.PageSource.Replace("'", "\"");
+                                    data = driver.PageSource;
                                     n = data.IndexOf("data-auto=\"pagination-next\"");
                                     if (n >= 0)
                                     {
@@ -2176,12 +2175,12 @@ namespace WildberriesParser
                                             stopwatch.Restart();
                                             while (!html.Contains("</div>") && stopwatch.Elapsed.TotalSeconds < 12)
                                             {
-                                                html = driver.PageSource.Replace("'", "\"").Replace("&nbsp;", " ").Replace("&thinsp;", " ");
+                                                html = driver.PageSource.Replace("&nbsp;", " ").Replace("&thinsp;", " ");
                                             }
                                             stopwatch.Stop();
                                             worksheet.SetValue(count + 2, beruFields["query"].Column, query);
                                             text = driver.FindElementByTagName("html").Text;
-                                            n = html.IndexOf("data-zone-name=\"productVendor\"");
+                                            n = html.IndexOf("data-apiary-widget-name=\"@marketplace/SkuVendorInfo\"");
 
                                             try
                                             {
@@ -2190,12 +2189,12 @@ namespace WildberriesParser
                                                 {
                                                     try
                                                     {
-                                                        data = html.Substring(n + "data-zone-name=\"productVendor\"".Length);
-                                                        n = data.IndexOf("data-auto=\"title\"");
+                                                        data = html.Substring(n + "data-apiary-widget-name=\"@marketplace/SkuVendorInfo\"".Length);
+                                                        n = data.IndexOf("<a");
                                                         data2 = "";
                                                         if (n >= 0)
                                                         {
-                                                            data = data.Substring(n + "data-auto=\"title\">".Length);
+                                                            data = data.Substring(0,n);
                                                             data = data.Substring(data.IndexOf("<div"));
                                                             data = data.Substring(data.IndexOf("class=\"") + "class=\"".Length);
                                                             foreach (var elem in driver.FindElementsByCssSelector($"div[class='{data.Substring(0, data.IndexOf("\""))}']"))
@@ -2236,7 +2235,7 @@ namespace WildberriesParser
                                                         else
                                                         {
                                                             data = html;
-                                                            n = data.LastIndexOf("<meta itemprop=\"position\" content=\"2\"");
+                                                            n = data.LastIndexOf("<meta itemprop=\"position\" content=\"3\"");
                                                             if (n >= 0)
                                                             {
                                                                 data = data.Substring(n);
@@ -2252,7 +2251,7 @@ namespace WildberriesParser
                                                         if (data2 == "")
                                                         {
                                                             data2 = html;
-                                                            n = data2.LastIndexOf("<meta itemprop=\"position\" content=\"2\"");
+                                                            n = data2.LastIndexOf("<meta itemprop=\"position\" content=\"3\"");
                                                             if (n >= 0)
                                                             {
                                                                 data2 = data2.Substring(n);
@@ -2506,8 +2505,8 @@ namespace WildberriesParser
                                             {
                                                 worksheet.SetValue(count + 2, beruFields["comments"].Column, 0);
                                             }
-                                            data = text;
-                                            n = data.IndexOf("Этот товар любят");
+                                            data = html;
+                                            n = data.IndexOf("data-zone-name=\"reasonsToBuy\"");
                                             if (n >= 0)
                                             {
                                                 try
@@ -2515,34 +2514,26 @@ namespace WildberriesParser
                                                     data = data.Substring(n);
                                                     try
                                                     {
-                                                        data = data.Substring(data.IndexOf("\r\n") + 2);
+                                                        data = data.Substring(0,data.IndexOf("</span>"));
                                                     }
                                                     catch { }
-                                                    try
-                                                    {
-                                                        data = data.Substring(0, data.IndexOf("\r\n"));
-                                                    }
-                                                    catch { }
-                                                    data2 = data.ToLower();
+                                                    data = data.Substring(data.LastIndexOf(">")+1);
+                                                    data2 = "";
                                                     for (int i = 0; i < data.Length; i++)
                                                     {
-                                                        if (!char.IsDigit(data[i]))
+                                                        if (char.IsDigit(data[i]))
                                                         {
-                                                            data = data.Remove(i, 1);
-                                                            i--;
+                                                            data2 += data[i];
+                                                        }
+                                                        else
+                                                        {
+                                                            if(data2!="")
+                                                            {
+                                                                break;
+                                                            }
                                                         }
                                                     }
-                                                    if (data2.Contains("купил"))
-                                                    {
-                                                        worksheet.SetValue(count + 2, beruFields["sales"].Column, int.Parse(data));
-                                                    }
-                                                    else
-                                                    {
-                                                        if (data2.Contains("интересовал"))
-                                                        {
-                                                            worksheet.SetValue(count + 2, beruFields["interest"].Column, int.Parse(data));
-                                                        }
-                                                    }
+                                                    worksheet.SetValue(count + 2, beruFields["sales"].Column, int.Parse(data2));
                                                 }
                                                 catch { }
                                             }
