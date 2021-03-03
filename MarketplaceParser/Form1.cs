@@ -793,7 +793,7 @@ namespace WildberriesParser
                     {
                         request += "?";
                     }
-                    request += "sort=" + sort;
+                    request += "sort=" + sort+ "&xsearch=true";
                     while (true)
                     {
                         try
@@ -1054,6 +1054,10 @@ namespace WildberriesParser
                                                 {
                                                     worksheet.SetValue(count + 2, WBFields["sales"].Column, 0);
                                                 }
+                                            }
+                                            else
+                                            {
+                                                worksheet.SetValue(count + 2, WBFields["sales"].Column, 0);
                                             }
                                             n = html.IndexOf("<span class=\"final-cost\"");
                                             if (n >= 0)
@@ -1362,7 +1366,7 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
                     int n = html.IndexOf("data-widget=\"fulltextResultsHeader\"");
-                    bool flag = false;
+                    bool flag = false, flag2=false;
                     if (n >= 0)
                     {
                         string c = html.Substring(n + "data-widget=\"fulltextResultsHeader\"".Length);
@@ -1554,6 +1558,11 @@ namespace WildberriesParser
                                     nextUrl = null;
                                     page++;
                                     nextUrl = request + $"&page={page}";
+                                    urls.Clear();
+                                    while (urls.Count < 100)
+                                    {
+                                        urls.Add("https://www.ozon.ru/context/detail/id/176966759/?asb=au%252FsSiU6PIxTKxCwruMjeC%252F2xsORrFprHqGxTnxypxo%253D");
+                                    }
                                     foreach (var url in urls)
                                     {
                                         if (stop)
@@ -1756,50 +1765,27 @@ namespace WildberriesParser
                                                 }
                                                 catch { }
                                             }
-                                            data = html;
-                                            n = data.IndexOf("data-widget=\"webPrice\"");
-                                            if (n >= 0)
+                                            flag2 = false;
+                                            do
                                             {
-                                                try
+                                                data = html;
+                                                n = data.IndexOf("data-widget=\"webPrice\"");
+                                                if (n >= 0)
                                                 {
-                                                    data = data.Substring(n + "data-widget=\"webPrice\"".Length);
-                                                    n = data.IndexOf("<span");
-                                                    flag = data.Contains("Товар закончился") && data.IndexOf("Товар закончился") < n;
-                                                    if (n >= 0)
+                                                    try
                                                     {
-                                                        if (!flag)
-                                                        {
-                                                            data = data.Substring(data.IndexOf("</button>"));
-                                                            n = data.IndexOf("<span");
-                                                        }
-                                                        data = data.Substring(n + "<span".Length);
-                                                        data = data.Substring(data.IndexOf("<span"));
-                                                        data = data.Substring(data.IndexOf(">") + 1);
-                                                        data2 = data.Substring(0, data.IndexOf("</span>"));
-                                                        try
-                                                        {
-                                                            data2 = data2.Substring(data2.IndexOf(">"));
-                                                        }
-                                                        catch { }
-                                                        for (int i = 0; i < data2.Length; i++)
-                                                        {
-                                                            if (!char.IsDigit(data2[i]))
-                                                            {
-                                                                data2 = data2.Remove(i, 1);
-                                                                i--;
-                                                            }
-                                                        }
-                                                        try
-                                                        {
-                                                            price = int.Parse(data2);
-                                                            worksheet.SetValue(count + 2, ozonFields["priceafter"].Column, price);
-                                                        }
-                                                        catch { }
-                                                        data = data.Substring(0, data.IndexOf("</div>"));
+                                                        data = data.Substring(n + "data-widget=\"webPrice\"".Length);
                                                         n = data.IndexOf("<span");
+                                                        flag = flag2 || (data.Contains("Товар закончился") && data.IndexOf("Товар закончился") < n);
                                                         if (n >= 0)
                                                         {
+                                                            if (!flag)
+                                                            {
+                                                                data = data.Substring(data.IndexOf("</button>"));
+                                                                n = data.IndexOf("<span");
+                                                            }
                                                             data = data.Substring(n + "<span".Length);
+                                                            data = data.Substring(data.IndexOf("<span"));
                                                             data = data.Substring(data.IndexOf(">") + 1);
                                                             data2 = data.Substring(0, data.IndexOf("</span>"));
                                                             try
@@ -1807,26 +1793,62 @@ namespace WildberriesParser
                                                                 data2 = data2.Substring(data2.IndexOf(">"));
                                                             }
                                                             catch { }
+                                                            for (int i = 0; i < data2.Length; i++)
+                                                            {
+                                                                if (!char.IsDigit(data2[i]))
+                                                                {
+                                                                    data2 = data2.Remove(i, 1);
+                                                                    i--;
+                                                                }
+                                                            }
                                                             try
                                                             {
-                                                                for (int i = 0; i < data2.Length; i++)
-                                                                {
-                                                                    if (!char.IsDigit(data2[i]))
-                                                                    {
-                                                                        data2 = data2.Remove(i, 1);
-                                                                        i--;
-                                                                    }
-                                                                }
-                                                                worksheet.SetValue(count + 2, ozonFields["pricebefore"].Column, int.Parse(data2));
+                                                                price = int.Parse(data2);
+                                                                worksheet.SetValue(count + 2, ozonFields["priceafter"].Column, price);
+                                                                flag2 = false;
                                                             }
-                                                            catch
+                                                            catch 
                                                             {
+                                                                if (flag2)
+                                                                {
+                                                                    break;
+                                                                }
+                                                                flag2 = true;
+                                                                continue;
+                                                            }
+                                                            data = data.Substring(0, data.IndexOf("</div>"));
+                                                            n = data.IndexOf("<span");
+                                                            if (n >= 0)
+                                                            {
+                                                                data = data.Substring(n + "<span".Length);
+                                                                data = data.Substring(data.IndexOf(">") + 1);
+                                                                data2 = data.Substring(0, data.IndexOf("</span>"));
+                                                                try
+                                                                {
+                                                                    data2 = data2.Substring(data2.IndexOf(">"));
+                                                                }
+                                                                catch { }
+                                                                try
+                                                                {
+                                                                    for (int i = 0; i < data2.Length; i++)
+                                                                    {
+                                                                        if (!char.IsDigit(data2[i]))
+                                                                        {
+                                                                            data2 = data2.Remove(i, 1);
+                                                                            i--;
+                                                                        }
+                                                                    }
+                                                                    worksheet.SetValue(count + 2, ozonFields["pricebefore"].Column, int.Parse(data2));
+                                                                }
+                                                                catch
+                                                                { }
                                                             }
                                                         }
                                                     }
+                                                    catch { }
                                                 }
-                                                catch { }
                                             }
+                                            while (flag2);
                                             data = text;
                                             n = data.LastIndexOf("Вес товара, г");
                                             if (n < 0)
