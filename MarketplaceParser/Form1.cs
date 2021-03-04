@@ -664,7 +664,7 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     if (!driver.FindElementByTagName("html").GetAttribute("innerHTML").ToLower().Contains("добавить в корзину"))
                         return "0";
-                    var elem = driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1 j-add-to-card']"));
+                    var elem = driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1']"));
                     ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", elem);
                     Thread.Sleep(200);
                     elem.Click();
@@ -673,7 +673,7 @@ namespace WildberriesParser
                     {
                         try
                         {
-                            elem = driver.FindElementByCssSelector("button[class='c-btn-main j-confirm']");
+                            elem = driver.FindElementByCssSelector("button[class='c-btn-main']");
                             if (elem.Displayed)
                             {
                                 elem.Click();
@@ -725,7 +725,7 @@ namespace WildberriesParser
                 string ozonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.Create), "OZON");
                 if (!Directory.Exists(ozonPath))
                     Directory.CreateDirectory(ozonPath);
-                using (var file = new StreamWriter(new FileStream(Path.Combine(ozonPath, "log.txt"), FileMode.OpenOrCreate)))
+                using (var file = new StreamWriter(new FileStream(Path.Combine(ozonPath, "MarketPlaceParser_Log.txt"), FileMode.OpenOrCreate)))
                 {
                     file.WriteLine(ex.Message + "\n" + driver.PageSource);
                 }
@@ -1299,6 +1299,7 @@ namespace WildberriesParser
             return new Thread(() =>
             {
                 ChromeDriver driver = CreateDriver();
+                driver.Manage().Window.Minimize();
                 string prevCount = ozonCountTextBox.Text;
                 try
                 {
@@ -1321,6 +1322,7 @@ namespace WildberriesParser
                             }
                             catch { }
                             driver = CreateDriver();
+                            driver.Manage().Window.Minimize();
                         }
                     }
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
@@ -1351,6 +1353,7 @@ namespace WildberriesParser
                             }
                             catch { }
                             driver = CreateDriver();
+                            driver.Manage().Window.Minimize();
                         }
                     }
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
@@ -1592,6 +1595,7 @@ namespace WildberriesParser
                                                     try
                                                     {
                                                         driver = CreateDriver();
+                                                        driver.Manage().Window.Minimize();
                                                     }
                                                     catch { }
                                                 }
@@ -1954,6 +1958,7 @@ namespace WildberriesParser
                                             }
                                             catch { }
                                             driver = CreateDriver();
+                                            driver.Manage().Window.Minimize();
                                         }
                                     }
                                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
