@@ -130,7 +130,19 @@ namespace WildberriesParser
                 {
                     return new ChromeDriver(service, options);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("session not created"))
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            this.WindowState = FormWindowState.Normal;
+                            this.TopMost = true;
+                            this.TopMost = false;
+                            MessageBox.Show("Версия хрома и драйвера различаются", "Проблема", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }));
+                    }
+                }
             }
         }
 
@@ -1561,11 +1573,6 @@ namespace WildberriesParser
                                     nextUrl = null;
                                     page++;
                                     nextUrl = request + $"&page={page}";
-                                    urls.Clear();
-                                    while (urls.Count < 100)
-                                    {
-                                        urls.Add("https://www.ozon.ru/context/detail/id/176966759/?asb=au%252FsSiU6PIxTKxCwruMjeC%252F2xsORrFprHqGxTnxypxo%253D");
-                                    }
                                     foreach (var url in urls)
                                     {
                                         if (stop)
