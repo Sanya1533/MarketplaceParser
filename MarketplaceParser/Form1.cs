@@ -795,6 +795,10 @@ namespace WildberriesParser
                         }
                         request = request.Replace("&sort=" + data2, "");
                     }
+                    if(driver.PageSource.Contains("Requests quota exceeded"))
+                    {
+
+                    }
                     if (request.Contains("search.aspx?"))
                     {
                         request += "&";
@@ -822,6 +826,10 @@ namespace WildberriesParser
                             driver = CreateDriver();
                             driver.Manage().Window.Minimize();
                         }
+                    }
+                    if (driver.PageSource.Contains("Requests quota exceeded"))
+                    {
+
                     }
                     int page = 1;
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
@@ -970,6 +978,10 @@ namespace WildberriesParser
                                                     driver = CreateDriver();
                                                     driver.Manage().Window.Minimize();
                                                 }
+                                            }
+                                            if (driver.PageSource.Contains("Requests quota exceeded"))
+                                            {
+
                                             }
                                             html = "";
                                             while (!html.Contains("</div>"))
@@ -1479,7 +1491,8 @@ namespace WildberriesParser
                                         MessageBox.Show("Подтвердите, что я не робот", "Помогите мне", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                     }
                                     driver.Manage().Window.Position = new Point(-20000, -20000);
-                                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete")); Thread.Sleep(1000);
+                                    wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete")); 
+                                    Thread.Sleep(1000);
                                     html = driver.PageSource;
                                     n = html.IndexOf("data-widget=\"searchResultsV2\"");
                                     data = "f";
@@ -1639,7 +1652,14 @@ namespace WildberriesParser
                                                 html = driver.PageSource.Replace("&nbsp;", " ").Replace("&thinsp;", " ").Replace("&quot;", "\"");
                                             }
                                             text = "";
-                                            while (!text.ToLower().Contains("характеристики"))
+                                            var height = (long)driver.ExecuteScript("return document.body.scrollHeight");
+                                            for (int i = 0; i < height; i += 150)
+                                            {
+                                                height = (long)driver.ExecuteScript("return document.body.scrollHeight");
+                                                driver.ExecuteScript("window.scrollTo(0," + i.ToString() + ")");
+                                            }
+                                            stopwatch.Restart();
+                                            while (!text.ToLower().Contains("характеристики") && stopwatch.Elapsed.TotalSeconds < 15)
                                             {
                                                 text = driver.FindElementByTagName("html").Text;
                                             }
