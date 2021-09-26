@@ -44,8 +44,6 @@ namespace WildberriesParser
 
         private object lockObj = new object();
 
-        private object lockObj2 = new object();
-
         private ExcelPackage package;
 
         private bool commonStop = false;
@@ -676,12 +674,12 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     if (!driver.FindElementByTagName("html").GetAttribute("innerHTML").ToLower().Contains("добавить в корзину"))
                         return "0";
-                    var elem = driver.FindElementByCssSelector("div[class='cart-btn-wrap']").FindElement(By.CssSelector("button[class='c-btn-main-lg-v1']"));
+                    var elem = driver.FindElementByCssSelector("div[class='same-part-kt__order']").FindElement(By.CssSelector("button[class='btn-main']"));
                     ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", elem);
                     Thread.Sleep(200);
                     elem.Click();
                     Thread.Sleep(500);
-                    if (!driver.PageSource.Contains("class=\"c-btn-base-lg-v1 j-go-to-basket\""))
+                    if (!driver.PageSource.Contains("class=\"btn-base j-go-to-basket\""))
                     {
                         try
                         {
@@ -710,12 +708,12 @@ namespace WildberriesParser
                 }
                 try
                 {
-                    var btnElement = driver.FindElementByClassName("plus");
-                    var brandElement = driver.FindElementByCssSelector("input[class='in_tb numeric ignore']");
+                    var btnElement = driver.FindElementByCssSelector("button[class='count__plus plus']");
+                    var brandElement = driver.FindElementByCssSelector("input[class='in_tb j-tb-qnt count__numeric ignore']");
                     while (true)
                     {
                         btnElement.Click();
-                        if (btnElement.GetAttribute("class") != "plus")
+                        if (btnElement.GetAttribute("class") != "count__plus plus")
                             break;
                         if (int.Parse(brandElement.GetProperty("value")) >= 255)
                             break;
@@ -725,11 +723,11 @@ namespace WildberriesParser
                 { }
                 try
                 {
-                    return driver.FindElementByCssSelector("input[class='in_tb numeric ignore']").GetProperty("value");
+                    return driver.FindElementByCssSelector("input[class='in_tb j-tb-qnt count__numeric ignore']").GetProperty("value");
                 }
                 catch
                 {
-                    return driver.FindElementByCssSelector("input[class='in_tb numeric ignore valid']").GetProperty("value");
+                    return "0";
                 }
             }
             catch (Exception ex)
@@ -805,7 +803,7 @@ namespace WildberriesParser
                     {
                         request += "?";
                     }
-                    request += "sort=" + sort+ "&xsearch=true";
+                    request += "sort=" + sort + "&xsearch=true";
                     while (true)
                     {
                         try
@@ -827,12 +825,33 @@ namespace WildberriesParser
                     }
                     int page = 1;
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
                     string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "");
-                    int n = html.IndexOf("<span class=\"goods-count j-goods-count\">");
+                    int n = html.IndexOf("<span class=\"goods-count\"");
+                    string c = html.Substring(n + "<span class=\"goods-count\"".Length);
+                    c = c.Substring(0, c.IndexOf("</span>"));
+                    while ((n < 0 || int.Parse(c) <= 0) && stopwatch.Elapsed.TotalSeconds < 10)
+                    {
+                        html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "");
+                        n = html.IndexOf("<span class=\"goods-count\"");
+                        c = html.Substring(n + "<span class=\"goods-count\"".Length);
+                        c = c.Substring(0, c.IndexOf("</span>"));
+                        c = c.Substring(c.LastIndexOf(">") + 1);
+                        for (int i = 0; i < c.Length; i++)
+                        {
+                            if (!char.IsDigit(c[i]))
+                            {
+                                c = c.Remove(i, 1);
+                                i--;
+                            }
+                        }
+                    }
                     if (n >= 0)
                     {
-                        string c = html.Substring(n + "<span class=\"goods-count j-goods-count\">".Length);
+                        c = html.Substring(n + "<span class=\"goods-count\"".Length);
                         c = c.Substring(0, c.IndexOf("</span>"));
+                        c = c.Substring(c.LastIndexOf(">") + 1);
                         for (int i = 0; i < c.Length; i++)
                         {
                             if (!char.IsDigit(c[i]))
@@ -876,7 +895,6 @@ namespace WildberriesParser
                         ReadOnlyCollection<IWebElement> items;
                         List<string> urls = new List<string>();
                         string nextUrl;
-                        string name;
                         char[] ar = new char[] { ' ', '\n', '\r' };
                         ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("WB");
                         foreach (var item in WBFields.Values)
@@ -897,13 +915,13 @@ namespace WildberriesParser
                                 {
                                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                                     Thread.Sleep(200);
-                                    items = driver.FindElementsByCssSelector("a[class='ref_goods_n_p j-open-full-product-card']");
+                                    items = driver.FindElementsByCssSelector("a[class='product-card__main j-open-full-product-card']");
                                     urls.Clear();
                                     foreach (var item in items)
                                     {
                                         urls.Add(item.GetAttribute("href"));
                                     }
-                                    items = driver.FindElementsByCssSelector("a[class='ref_goods_n_p j-open-full-product-card is-adult']");
+                                    items = driver.FindElementsByCssSelector("a[class='product-card__main j-open-full-product-card is-adult']");
                                     foreach (var item in items)
                                     {
                                         urls.Add(item.GetAttribute("href"));
@@ -975,33 +993,29 @@ namespace WildberriesParser
                                                 }
                                                 catch { }
                                             }
-                                            n = html.IndexOf("<div class=\"brand-and-name j-product-title\"");
+                                            n = html.IndexOf("class=\"same-part-kt__header\"");
                                             if (n >= 0)
                                             {
                                                 try
                                                 {
-                                                    html = html.Substring(n + "<div class=\"brand-and-name j-product-title\"".Length);
-                                                    n = html.IndexOf("<span class=\"name");
-                                                    if (n >= 0)
+                                                    cell = worksheet.Cells[count + 2, WBFields["name"].Column];
+                                                    var gt = driver.FindElementByCssSelector("h1[class='same-part-kt__header']").Text;
+                                                    cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute)
                                                     {
-                                                        html = html.Substring(n + "<span class=\"name".Length);
-                                                        name = html.Substring(0, html.IndexOf("</span>"));
-                                                        name = name.Substring(name.IndexOf(">") + 1);
-                                                        cell = worksheet.Cells[count + 2, WBFields["name"].Column];
-                                                        cell.Hyperlink = new ExcelHyperLink(url, UriKind.Absolute) { Display = name };
-                                                    }
+                                                        Display = driver.FindElementByCssSelector("h1[class='same-part-kt__header']").Text
+                                                    };
                                                 }
                                                 catch { }
                                             }
-                                            n = html.IndexOf("<div class=\"article\"");
+                                            n = html.IndexOf("class=\"same-part-kt__article\"");
                                             if (n >= 0)
                                             {
                                                 try
                                                 {
-                                                    html = html.Substring(n + "<div class=\"article\"".Length);
-                                                    data = html.Substring(html.IndexOf("<span"));
-                                                    data = data.Substring(data.IndexOf(">") + 1);
-                                                    data = data.Substring(0, data.IndexOf("<"));
+                                                    html = html.Substring(n + "class=\"same-part-kt__article\"".Length);
+                                                    data = html.Substring(0, html.IndexOf("</p>"));
+                                                    data = data.Substring(0, data.LastIndexOf("</"));
+                                                    data = data.Substring(data.LastIndexOf(">") + 1);
                                                     for (int i = 0; i < data.Length; i++)
                                                     {
                                                         if (!char.IsDigit(data[i]))
@@ -1021,12 +1035,12 @@ namespace WildberriesParser
                                                 }
                                                 catch { }
                                             }
-                                            n = html.IndexOf("<p class=\"order-quantity j-orders-count-wrapper\"");
+                                            n = html.IndexOf("<p class=\"same-part-kt__order-quantity j-orders-count-wrapper\"");
                                             if (n >= 0)
                                             {
                                                 try
                                                 {
-                                                    html = html.Substring(n + "<p class=\"order-quantity j-orders-count-wrapper\"".Length);
+                                                    html = html.Substring(n + "<p class=\"same-part-kt__order-quantity j-orders-count-wrapper\"".Length);
                                                     data = html.Substring(0, html.IndexOf("</span>")).Replace(" ", "");
                                                     while (true)
                                                     {
@@ -1071,12 +1085,12 @@ namespace WildberriesParser
                                             {
                                                 worksheet.SetValue(count + 2, WBFields["sales"].Column, 0);
                                             }
-                                            n = html.IndexOf("<span class=\"final-cost\"");
+                                            n = html.LastIndexOf("<span class=\"price-block__final-price\"");
                                             if (n >= 0)
                                             {
                                                 try
                                                 {
-                                                    html = html.Substring(n + "<span class=\"final-cost\"".Length);
+                                                    html = html.Substring(n + "<span class=\"price-block__final-price\"".Length);
                                                     data = html.Substring(0, html.IndexOf("</span>"));
                                                     for (int i = 0; i < data.Length; i++)
                                                     {
@@ -1095,18 +1109,17 @@ namespace WildberriesParser
                                                 }
                                                 catch { }
                                             }
-                                            n = html.IndexOf("<span class=\"old-price j-final-saving\"");
+                                            n = html.LastIndexOf("class=\"price-block__old-price j-final-saving\"");
                                             if (n >= 0)
                                             {
                                                 try
                                                 {
-                                                    html = html.Substring(n + "<span class=\"old-price j-final-saving\"".Length);
-                                                    data = html.Substring(0, html.IndexOf("</span>"));
-                                                    n = data.IndexOf("<del class=\"c-text-base\">");
+                                                    html = html.Substring(n + "class=\"price-block__old-price j-final-saving\"".Length);
+                                                    data = html.Substring(0, html.IndexOf("</del>"));
+                                                    n = data.IndexOf(">");
                                                     if (n >= 0)
                                                     {
-                                                        data = data.Substring(n + "<del class=\"c-text-base\">".Length);
-                                                        data = data.Substring(0, data.IndexOf("</del>"));
+                                                        data = data.Substring(n + 1);
                                                         for (int i = 0; i < data.Length; i++)
                                                         {
                                                             if (!char.IsDigit(data[i]))
@@ -1131,22 +1144,21 @@ namespace WildberriesParser
                                                 try
                                                 {
                                                     data = data.Substring(n);
-                                                    data = data.Substring(0, data.IndexOf("</div>"));
-                                                    n = data.IndexOf("<span>");
+                                                    data = data.Substring(0, data.IndexOf("</tr>"));
+                                                    n = data.IndexOf("<td");
                                                     if (n >= 0)
                                                     {
-                                                        data = data.Substring(n + "<span>".Length);
-                                                        data = data.Substring(0, data.IndexOf("</span>")).Replace(" ", "");
+                                                        data = data.Substring(n + "<td".Length).Replace(" ", "");
                                                         while (true)
                                                         {
                                                             try
                                                             {
-                                                                if (data.IndexOf(">") < 0)
+                                                                if (data.IndexOf("</script>") < 0)
                                                                 {
                                                                     break;
                                                                 }
-                                                                data = data.Substring(data.IndexOf(">") + 1);
-                                                                if (data.IndexOf("<") != 0)
+                                                                data = data.Substring(data.IndexOf("</script>") + "</script>".Length);
+                                                                if (data.IndexOf("<script") != 0)
                                                                 {
                                                                     break;
                                                                 }
@@ -1381,7 +1393,7 @@ namespace WildberriesParser
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                     string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "").Replace(" ", "");
                     int n = html.IndexOf("data-widget=\"fulltextResultsHeader\"");
-                    bool flag = false, flag2=false;
+                    bool flag = false, flag2 = false;
                     if (n >= 0)
                     {
                         string c = html.Substring(n + "data-widget=\"fulltextResultsHeader\"".Length);
@@ -1818,7 +1830,7 @@ namespace WildberriesParser
                                                                 worksheet.SetValue(count + 2, ozonFields["priceafter"].Column, price);
                                                                 flag2 = false;
                                                             }
-                                                            catch 
+                                                            catch
                                                             {
                                                                 if (flag2)
                                                                 {
