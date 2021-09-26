@@ -672,6 +672,11 @@ namespace WildberriesParser
                         }
                     }
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    while (driver.FindElementByTagName("html").Text == "Requests quota exceeded")
+                    {
+                        driver.Navigate().Refresh();
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    }
                     if (!driver.FindElementByTagName("html").GetAttribute("innerHTML").ToLower().Contains("добавить в корзину"))
                         return "0";
                     var elem = driver.FindElementByCssSelector("div[class='same-part-kt__order']").FindElement(By.CssSelector("button[class='btn-main']"));
@@ -699,6 +704,11 @@ namespace WildberriesParser
                     {
                         driver.Navigate().GoToUrl("https://lk.wildberries.ru/basket");
                         wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                        while (driver.FindElementByTagName("html").Text == "Requests quota exceeded")
+                        {
+                            driver.Navigate().Refresh();
+                            wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                        }
                         if (!driver.PageSource.Replace("'", "\"").Contains("class=\"i-empty-basket\""))
                             break;
                     }
@@ -752,6 +762,17 @@ namespace WildberriesParser
             throw new Exception("Not found");
         }
 
+        private bool IsLess(string s, int n)
+        {
+            try
+            {
+                return int.Parse(s) < n;
+            }
+            catch
+            {
+                return true;
+            }
+        }
         private Thread GetWBParser(string query, int maxCount, string sort, ExcelPackage package)
         {
             return new Thread(() =>
@@ -783,6 +804,11 @@ namespace WildberriesParser
                         }
                     }
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    while (driver.FindElementByTagName("html").Text == "Requests quota exceeded")
+                    {
+                        driver.Navigate().Refresh();
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    }
                     request = driver.Url;
                     if (request.Contains("&sort="))
                     {
@@ -794,10 +820,6 @@ namespace WildberriesParser
                             data2 = data2.Substring(0, n2);
                         }
                         request = request.Replace("&sort=" + data2, "");
-                    }
-                    if(driver.PageSource.Contains("Requests quota exceeded"))
-                    {
-
                     }
                     if (request.Contains("search.aspx?"))
                     {
@@ -827,19 +849,29 @@ namespace WildberriesParser
                             driver.Manage().Window.Minimize();
                         }
                     }
-                    if (driver.PageSource.Contains("Requests quota exceeded"))
-                    {
-
-                    }
                     int page = 1;
                     wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    while (driver.FindElementByTagName("html").Text == "Requests quota exceeded")
+                    {
+                        driver.Navigate().Refresh();
+                        wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
+                    }
                     Stopwatch stopwatch = new Stopwatch();
                     stopwatch.Start();
                     string html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "");
                     int n = html.IndexOf("<span class=\"goods-count\"");
                     string c = html.Substring(n + "<span class=\"goods-count\"".Length);
                     c = c.Substring(0, c.IndexOf("</span>"));
-                    while ((n < 0 || int.Parse(c) <= 0) && stopwatch.Elapsed.TotalSeconds < 10)
+                    c = c.Substring(c.LastIndexOf(">") + 1);
+                    for (int i = 0; i < c.Length; i++)
+                    {
+                        if (!char.IsDigit(c[i]))
+                        {
+                            c = c.Remove(i, 1);
+                            i--;
+                        }
+                    }
+                    while ((n < 0 || IsLess(c,1)) && stopwatch.Elapsed.TotalSeconds < 10)
                     {
                         html = driver.PageSource.Replace("&nbsp;", "").Replace("&thinsp;", "");
                         n = html.IndexOf("<span class=\"goods-count\"");
@@ -979,9 +1011,10 @@ namespace WildberriesParser
                                                     driver.Manage().Window.Minimize();
                                                 }
                                             }
-                                            if (driver.PageSource.Contains("Requests quota exceeded"))
+                                            while (driver.FindElementByTagName("html").Text == "Requests quota exceeded")
                                             {
-
+                                                driver.Navigate().Refresh();
+                                                wait.Until(d => ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete"));
                                             }
                                             html = "";
                                             while (!html.Contains("</div>"))
@@ -1314,7 +1347,10 @@ namespace WildberriesParser
                         }));
                     }
                 }
-                catch { }
+                catch
+                {
+
+                }
                 try
                 {
                     driver?.Close();
@@ -1754,10 +1790,34 @@ namespace WildberriesParser
                                                         {
                                                             cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute);
                                                         }
-
                                                     }
                                                     catch
                                                     { }
+                                                }
+                                                catch { }
+                                            }
+                                            else
+                                            {
+                                                try
+                                                {
+                                                    foreach (var elem in driver.FindElementById("section-characteristics").FindElements(By.TagName("a")))
+                                                    {
+                                                        data = elem.GetAttribute("href");
+                                                        if (data.Contains("/brand/"))
+                                                        {
+                                                            data2 = elem.Text;
+                                                            cell = worksheet.Cells[count + 2, ozonFields["brand"].Column];
+                                                            if (data2 != "")
+                                                            {
+                                                                cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute) { Display = data2 };
+                                                            }
+                                                            else
+                                                            {
+                                                                cell.Hyperlink = new ExcelHyperLink(data, UriKind.Absolute);
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                                 catch { }
                                             }
